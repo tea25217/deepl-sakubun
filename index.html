@@ -1,1 +1,39 @@
-Deeplで他言語作文練習するやつ
+<html lang="ja">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css"/>
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <py-env>
+        - paths:
+            - /DeepLSakubun.py
+            - /question.txt
+    </py-env>
+  </head>
+
+  <body>
+    <input id="auth-key" class="border">
+    <label id="description">まずは日本語で回答してみましょう</label>
+    <label id="question"></label>
+    <label id="answer_original"></label>
+    <label id="answer_translated"></label>
+    <label id="answer_correct"></label>
+    <input id="sakubun" class="border">
+    <button id="btn" pys-onClick="handler">決定</button>
+    <py-script>
+import DeepLSakubun
+
+def setLabelText(id, text):
+    pyscript.write(id, text)
+
+def handler(*ags, **kws):
+    text_element = Element("sakubun")
+    newLabels = deepLSakubun.onClick(text_element)
+    for label in newLabels:
+        setLabelText(*label)
+
+deepLSakubun = DeepLSakubun.DeepLSakubun()
+setLabelText("question", deepLSakubun.choiceQuestion())
+    </py-script>
+  </body>
+</html>
