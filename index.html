@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="./pyscript.css"/>
-    <script defer src="./pyscript.js"></script>
+    <link rel="stylesheet" href="./deepl-sakubun/pyscript.css"/>
+    <script defer src="./deepl-sakubun/pyscript.js"></script>
     <py-env>
         - paths:
-            - /deepl-sakubun/DeepLSakubun.py
-            - /deepl-sakubun/question.txt
+            - /DeepLSakubun.py
+            - /question.txt
     </py-env>
   </head>
 
@@ -23,7 +23,7 @@
     <input id="sakubun" class="border">
     <button id="btn" pys-onClick="handler">決定</button>
     <py-script>
-import deepl-sakubun.DeepLSakubun
+import DeepLSakubun
 
 def setLabelText(id, text):
     pyscript.write(id, text)
