@@ -41,6 +41,7 @@ class DeepLSakubun:
                 newLabels = []
                 newLabels.append(self._readTranslatedAnswer(text))
                 newLabels.append(self._showCorrectAnswer(auth_key))
+                newLabels.append(("btn", "クリア"))
             case Status("Finish"):
                 newLabels = self._clear()
             case _:
@@ -93,7 +94,9 @@ class DeepLSakubun:
         self.answer_translated = ""
         self.answer_correct = ""
         self.status = Status("WaitingAnswer")
-        newLabels = (("question", self.question),
+        newLabels = (("description", "まずは日本語で回答してみましょう"),
+                     ("question", self.question),
+                     ("btn", "決定"),
                      ("answer_original", ""),
                      ("answer_translated", ""),
                      ("answer_correct", ""))
