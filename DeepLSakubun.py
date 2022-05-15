@@ -1,8 +1,13 @@
+from dataclasses import dataclass
+import json
 from random import randint
-from typing import NewType
-from js import fetch, document
+from typing import Literal
+from js import XMLHttpRequest
 
-Status = NewType("Status", str)
+
+@dataclass(slots=True)
+class Status:
+    name: Literal["WaitingAnswer", "WaitingTranslate", "Finish"]
 
 
 class DeepLSakubun:
@@ -14,8 +19,7 @@ class DeepLSakubun:
         self.answer_correct = ""
         self.source_lang = "JA"
         self.target_lang = "EN-GB"
-        self.status: Status = Status("WaitingAnswer")
-        self.auth_key = ""
+        self.status = Status("WaitingAnswer")
 
     def _readQuestionFile(self):
         try:
@@ -29,18 +33,16 @@ class DeepLSakubun:
         self.question = self.questions[idx]
         return self.question
 
-    def onClick(self, text_element):
-        text = text_element.element.value
-        text_element.clear()
+    def onClick(self, text, auth_key):
         match self.status:
-            case "WaitingAnswer":
+            case Status("WaitingAnswer"):
                 newLabels = self._readOriginalAnswer(text)
-            case "WaitingTranslate":
+            case Status("WaitingTranslate"):
                 newLabels = []
                 newLabels.append(self._readTranslatedAnswer(text))
-                self._showCorrectAnswer()
-            case "Finish":
-                self._clear()
+                newLabels.append(self._showCorrectAnswer(auth_key))
+            case Status("Finish"):
+                newLabels = self._clear()
             case _:
                 raise Exception
         return newLabels
@@ -56,38 +58,42 @@ class DeepLSakubun:
         self.answer_translated = text
         return ("answer_translated", "英語の回答:" + text)
 
-    def _showCorrectAnswer(self):
-        param = self._generateParam()
-        res = self._fetch(param)
-        self.answer_correct = res["translations"][1]["text"]
-        pyscript.write("answer_correct", "DeepLによる回答:" + self.answer_correct)
+    def _showCorrectAnswer(self, auth_key):
+        if not auth_key:
+            raise Exception
+        param = self._generateParam(auth_key)
+        self._callAPI(param)
+        self.answer_correct = self.response["translations"][0]["text"]
         self.status = Status("Finish")
+        return ("answer_correct", "DeepLによる回答:" + self.answer_correct)
 
-    def _generateParam(self):
-        if not self.auth_key:
-            self.auth_key = Element("auth-key")
-        URL = "/v2/translate?auth_key=" + self.auth_key
+    def _generateParam(self, auth_key):
+        URL = "https://api-free.deepl.com/v2/translate"
         headers = {
-            "Host": "api-free.deepl.com",
-            "User-Agent": "YourApp",
-            "Accept": "*/*",
             "Content-Type": "application/x-www-form-urlencoded"
         }
-        body = "auth_key=" + self.auth_key + "&text=Q." + self.question + "&text=A." + self.answer_translated
-        init = {
-            "method": "POST",
-            "headers": headers,
-            "body": body
-        }
-        return {URL, init}
+        body = "auth_key=" + auth_key + \
+            "&text=Q." + self.question + \
+            " A." + self.answer_original + \
+            "&target_lang=" + self.target_lang
+        param = {"URL": URL, "headers": headers, "body": body}
+        return param
 
-    async def _fetch(param):
-        res = await fetch(*param)
-        return await res.json()
+    def _callAPI(self, param):
+        req = XMLHttpRequest.new()
+        req.open("POST", param["URL"], False)
+        for k, v in param["headers"].items():
+            req.setRequestHeader(k, v)
+        req.send(param["body"])
+        self.response = json.loads(req.response)
 
     def _clear(self):
-        self.question = self._choiceQuestion()
+        self.question = self.choiceQuestion()
         self.answer_original = ""
         self.answer_translated = ""
         self.answer_correct = ""
         self.status = Status("WaitingAnswer")
+        newLabels = (("answer_original", ""),
+                     ("answer_translated", ""),
+                     ("answer_correct", ""))
+        return newLabels

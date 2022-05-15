@@ -12,7 +12,7 @@
   </head>
 
   <body>
-    <input id="auth-key" class="border">
+    <input id="auth_key" class="border">
     <label id="description">まずは日本語で回答してみましょう</label>
     <label id="question"></label>
     <label id="answer_original"></label>
@@ -27,8 +27,10 @@ def setLabelText(id, text):
     pyscript.write(id, text)
 
 def handler(*ags, **kws):
-    text_element = Element("sakubun")
-    newLabels = deepLSakubun.onClick(text_element)
+    text = Element("sakubun").element.value
+    Element("sakubun").clear()
+    auth_key = Element("auth_key").element.value
+    newLabels = deepLSakubun.onClick(text, auth_key)
     for label in newLabels:
         setLabelText(*label)
 
