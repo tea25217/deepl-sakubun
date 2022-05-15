@@ -93,7 +93,8 @@ class DeepLSakubun:
         self.answer_translated = ""
         self.answer_correct = ""
         self.status = Status("WaitingAnswer")
-        newLabels = (("answer_original", ""),
+        newLabels = (("question", self.question),
+                     ("answer_original", ""),
                      ("answer_translated", ""),
                      ("answer_correct", ""))
         return newLabels
