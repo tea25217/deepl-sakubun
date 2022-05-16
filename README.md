@@ -7,6 +7,6 @@ EnglisterやDeep英作文のパチモンです<br>
 使う際には自分でDeepLのAPIキー(無料版)を取得する必要があります<br>
 https://www.deepl.com/pro-api?cta=menu-pro-api<br>
 
-一応独自仕様として、翻訳先はイギリス英語<br>
-(気が向いたら選択できるようにする)<br>
+一応独自仕様として、複数言語に対応<br>
+（API仕様のtarget_langに記載されているうち一部）<br>
 https://www.deepl.com/ja/docs-api/translating-text/request/<br>
