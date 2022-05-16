@@ -14,16 +14,35 @@
     <!--<py-env>タグの内側にコメントを書くと動かなくなる-->
     <py-env>
         - paths:
-            - /deepl-sakubun/DeepLSakubun.py
-            - /deepl-sakubun/question.txt
+            - /DeepLSakubun.py
+            - /question.txt
     </py-env>
   </head>
 
   <body>
     <form>
-      <div class="form-group col-md-3">
-        <label>APIキー</label>
-        <input id="auth_key" class="form-control" placeholder="Put API Key."><br>
+      <div class="form-group row">
+        <div class="col-md-3">
+          <label>APIキー</label>
+          <input id="auth_key" class="form-control" placeholder="Put API Key."><br>
+        </div>
+        <div class="col-md-3">
+          <label>翻訳先言語</label>
+          <select id="language" class="form-control">
+            <option value="EN-GB" selected="selected">英語（イギリス）</option>
+            <option value="EN-US">英語（アメリカ）</option>
+            <option value="DE">ドイツ語</option>
+            <option value="ES">スペイン語</option>
+            <option value="FI">フィンランド語</option>
+            <option value="FR">フランス語</option>
+            <option value="IT">イタリア語</option>
+            <option value="DE">ドイツ語</option>
+            <option value="PT-PT">ポルトガル語</option>
+            <option value="PT-BR">ポルトガル語（ブラジル）</option>
+            <option value="RU">ロシア語</option>
+            <option value="ZH">中国語</option>
+          </select>
+        </div>
       </div>
       <div class="form-group">
         <label id="description">まずは日本語で回答してみましょう</label><br>
@@ -41,16 +60,21 @@
     <py-script>
 import DeepLSakubun
 
+
 def setLabelText(id, text):
     pyscript.write(id, text)
+
 
 def handler(*ags, **kws):
     text = Element("sakubun").element.value
     Element("sakubun").clear()
     auth_key = Element("auth_key").element.value
-    newLabels = deepLSakubun.onClick(text, auth_key)
+    language = Element("language").element.value
+
+    newLabels = deepLSakubun.onClick(text, auth_key, language)
     for label in newLabels:
         setLabelText(*label)
+
 
 deepLSakubun = DeepLSakubun.DeepLSakubun()
 setLabelText("question", deepLSakubun.choiceQuestion())

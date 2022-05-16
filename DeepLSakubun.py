@@ -17,7 +17,6 @@ class DeepLSakubun:
         self.answer_original = ""
         self.answer_translated = ""
         self.answer_correct = ""
-        self.source_lang = "JA"
         self.target_lang = "EN-GB"
         self.status = Status("WaitingAnswer")
 
@@ -33,10 +32,10 @@ class DeepLSakubun:
         self.question = self.questions[idx]
         return self.question
 
-    def onClick(self, text, auth_key):
+    def onClick(self, text, auth_key, language, *args):
         match self.status:
             case Status("WaitingAnswer"):
-                newLabels = self._readOriginalAnswer(text)
+                newLabels = self._readOriginalAnswer(text, language)
             case Status("WaitingTranslate"):
                 newLabels = []
                 newLabels.append(self._readTranslatedAnswer(text))
@@ -48,11 +47,12 @@ class DeepLSakubun:
                 raise Exception
         return newLabels
 
-    def _readOriginalAnswer(self, text):
+    def _readOriginalAnswer(self, text, language):
         self.answer_original = text
+        self.target_lang = language
         self.status = Status("WaitingTranslate")
         newLabels = (("answer_original", "日本語の回答:" + text),
-                     ("description", "英語で回答してみましょう"))
+                     ("description", "翻訳先の言語で回答してみましょう"))
         return newLabels
 
     def _readTranslatedAnswer(self, text):
