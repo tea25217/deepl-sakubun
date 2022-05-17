@@ -27,7 +27,7 @@ class DeepLSakubun:
         except Exception:
             raise Exception
 
-    def choiceQuestion(self):
+    def chooseAQuestion(self):
         idx = randint(0, len(self.questions) - 1)
         self.question = self.questions[idx]
         return self.question
@@ -89,7 +89,7 @@ class DeepLSakubun:
         self.response = json.loads(req.response)
 
     def _clear(self):
-        self.question = self.choiceQuestion()
+        self.question = self.chooseAQuestion()
         self.answer_original = ""
         self.answer_translated = ""
         self.answer_correct = ""
