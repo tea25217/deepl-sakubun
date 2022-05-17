@@ -1,3 +1,5 @@
+## DeepLで外国語練習するやつ
+
 ここ<br>
 https://tea25217.github.io/deepl-sakubun/<br>
 （PyScriptの仕様上ページ読み込みに少し時間がかかります）<br>
