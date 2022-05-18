@@ -8,7 +8,7 @@ DOM操作はDeepLSakubun.onClickから対象のidと値を返してindex.htmlで
 from dataclasses import dataclass
 import json
 from random import randint
-from typing import Literal
+from typing import List, Literal, Tuple
 from js import XMLHttpRequest
 
 # 質問と回答をQ. ... A. ... で表す言語
@@ -72,19 +72,20 @@ class DeepLSakubun:
         self.questions = self._readQuestionFile()
         self.status = Status("WaitingAnswer")
 
-    def _readQuestionFile(self):
+    def _readQuestionFile(self) -> List[str]:
         try:
             with open("./question.txt", encoding="utf-8") as f:
                 return f.readlines()
         except Exception:
             raise Exception
 
-    def chooseAQuestion(self):
+    def chooseAQuestion(self) -> str:
         idx = randint(0, len(self.questions) - 1)
         self.question = self.questions[idx]
         return self.question
 
-    def onClick(self, text, auth_key, language, *args):
+    def onClick(self, text: str, auth_key: str, language: str, *args) \
+            -> Tuple[Tuple[str, str]] | List[Tuple[str, str]]:
         match self.status:
             # 日本語の回答を受け付ける状態
             case Status("WaitingAnswer"):
@@ -103,7 +104,8 @@ class DeepLSakubun:
                 raise Exception
         return newLabels
 
-    def _readOriginalAnswer(self, text, language):
+    def _readOriginalAnswer(self, text: str, language: str) \
+            -> Tuple[Tuple[str, str]]:
         self.answer_original = text
         self.target_lang = language
         self.status = Status("WaitingTranslate")
@@ -111,11 +113,11 @@ class DeepLSakubun:
                      ("description", "翻訳先の言語で回答してみましょう"))
         return newLabels
 
-    def _readTranslatedAnswer(self, text):
+    def _readTranslatedAnswer(self, text: str) -> Tuple[str, str]:
         self.answer_translated = text
         return ("answer_translated", text)
 
-    def _showCorrectAnswer(self, auth_key):
+    def _showCorrectAnswer(self, auth_key: str) -> Tuple[Tuple[str, str]]:
         # DeepLのAPIを叩く
         if not auth_key:
             raise Exception
@@ -134,11 +136,9 @@ class DeepLSakubun:
             self.status = Status("Finish")
             return (("answer_correct_q", self.answer_correct),)
 
-    def _generateParam(self, auth_key):
+    def _generateParam(self, auth_key: str) -> dict[str, str]:
         URL = "https://api-free.deepl.com/v2/translate"
-        headers = {
-            "Content-Type": "application/x-www-form-urlencoded"
-        }
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
         body = "auth_key=" + auth_key + \
             "&text=Q." + self.question + \
             " A." + self.answer_original + \
@@ -146,7 +146,7 @@ class DeepLSakubun:
         param = {"URL": URL, "headers": headers, "body": body}
         return param
 
-    def _callAPI(self, param):
+    def _callAPI(self, param: dict[str, str | dict[str, str]]) -> None:
         req = XMLHttpRequest.new()
         req.open("POST", param["URL"], False)
         for k, v in param["headers"].items():
@@ -154,11 +154,11 @@ class DeepLSakubun:
         req.send(param["body"])
         self.response = json.loads(req.response)
 
-    def _splitReceivedAnswer(self, received):
+    def _splitReceivedAnswer(self, received: str) -> None:
         self.answer_correct_q = received.split(" A.")[0]
         self.answer_correct_a = received.split(self.answer_correct_q)[1]
 
-    def _clear(self):
+    def _clear(self) -> Tuple[Tuple[str, str]]:
         self.question = self.chooseAQuestion()
         self.answer_original = ""
         self.answer_translated = ""
