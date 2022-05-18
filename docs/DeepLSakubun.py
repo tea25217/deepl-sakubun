@@ -15,19 +15,21 @@ from js import XMLHttpRequest
 LanguagesUsingQA = ("EN-GB", "EN-US", "JA")
 
 
-# DeepLSakubunが取る状態
-# WaitingAnswer -> WaitingTranslate -> Finish -> WaitingAnswer
-# のサイクルで遷移する
-# (そういえば3状態の決定性有限オートマトンかこれ)
 @dataclass(slots=True)
 class Status:
+    """DeepLSakubunクラスが取る状態
+
+    WaitingAnswer -> WaitingTranslate -> Finish -> WaitingAnswer
+    のサイクルで遷移する
+    (そういえば3状態の決定性有限オートマトンかこれ)
+
+    """
     name: Literal["WaitingAnswer", "WaitingTranslate", "Finish"]
 
 
 class DeepLSakubun:
-    """DeepLSakubun
+    """deepl-sakubunの主処理を行う
 
-    deepl-sakubunの本体。
     index.htmlのハンドラーから画面入力を受け取り、
     状態に応じた処理結果をlabelタグの変更内容として返す。
 
