@@ -1,3 +1,10 @@
+"""DeepLSakubun.py
+
+deepl-sakubunの本体。
+DOM操作はDeepLSakubun.onClickから対象のidと値を返してindex.htmlでやる。
+それ以外はここでやる。
+
+"""
 from dataclasses import dataclass
 import json
 from random import randint
