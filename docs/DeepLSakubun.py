@@ -13,11 +13,6 @@ class Status:
 class DeepLSakubun:
     def __init__(self):
         self.questions = self._readQuestionFile()
-        self.question = ""
-        self.answer_original = ""
-        self.answer_translated = ""
-        self.answer_correct = ""
-        self.target_lang = "EN-GB"
         self.status = Status("WaitingAnswer")
 
     def _readQuestionFile(self):
@@ -39,7 +34,8 @@ class DeepLSakubun:
             case Status("WaitingTranslate"):
                 newLabels = []
                 newLabels.append(self._readTranslatedAnswer(text))
-                newLabels.append(self._showCorrectAnswer(auth_key))
+                for label in self._showCorrectAnswer(auth_key):
+                    newLabels.append(label)
                 newLabels.append(("btn", "クリア"))
             case Status("Finish"):
                 newLabels = self._clear()
@@ -64,9 +60,10 @@ class DeepLSakubun:
             raise Exception
         param = self._generateParam(auth_key)
         self._callAPI(param)
-        self.answer_correct = self.response["translations"][0]["text"]
+        self._splitReceivedAnswer(self.response["translations"][0]["text"])
         self.status = Status("Finish")
-        return ("answer_correct", self.answer_correct)
+        return (("answer_correct_q", self.answer_correct_q),
+                ("answer_correct_a", self.answer_correct_a))
 
     def _generateParam(self, auth_key):
         URL = "https://api-free.deepl.com/v2/translate"
@@ -87,6 +84,10 @@ class DeepLSakubun:
             req.setRequestHeader(k, v)
         req.send(param["body"])
         self.response = json.loads(req.response)
+
+    def _splitReceivedAnswer(self, received):
+        self.answer_correct_q = received.split(" A.")[0]
+        self.answer_correct_a = received.split(self.answer_correct_q)[1]
 
     def _clear(self):
         self.question = self.chooseAQuestion()
