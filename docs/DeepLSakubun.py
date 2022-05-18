@@ -70,7 +70,7 @@ class DeepLSakubun:
         else:
             self.answer_correct = self.response["translations"][0]["text"]
             self.status = Status("Finish")
-            return (("answer_correct_q", self.answer_correct))
+            return (("answer_correct_q", self.answer_correct),)
 
     def _generateParam(self, auth_key):
         URL = "https://api-free.deepl.com/v2/translate"
@@ -101,6 +101,8 @@ class DeepLSakubun:
         self.answer_original = ""
         self.answer_translated = ""
         self.answer_correct = ""
+        self.answer_correct_q = ""
+        self.answer_correct_a = ""
         self.status = Status("WaitingAnswer")
         newLabels = (("description", "まずは日本語で回答してみましょう"),
                      ("question", self.question),
