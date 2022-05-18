@@ -4,6 +4,7 @@ from random import randint
 from typing import Literal
 from js import XMLHttpRequest
 
+# 質問と回答をQ. ... A. ... で表す言語
 LanguagesUsingQA = ("EN-GB", "EN-US", "JA")
 
 
@@ -31,14 +32,17 @@ class DeepLSakubun:
 
     def onClick(self, text, auth_key, language, *args):
         match self.status:
+            # 日本語の回答を受け付ける状態
             case Status("WaitingAnswer"):
                 newLabels = self._readOriginalAnswer(text, language)
+            # 翻訳先言語の回答を受け付ける状態
             case Status("WaitingTranslate"):
                 newLabels = []
                 newLabels.append(self._readTranslatedAnswer(text))
                 for label in self._showCorrectAnswer(auth_key):
                     newLabels.append(label)
                 newLabels.append(("btn", "クリア"))
+            # 終了後のクリアボタンを押された時
             case Status("Finish"):
                 newLabels = self._clear()
             case _:
@@ -58,10 +62,14 @@ class DeepLSakubun:
         return ("answer_translated", text)
 
     def _showCorrectAnswer(self, auth_key):
+        # DeepLのAPIを叩く
         if not auth_key:
             raise Exception
         param = self._generateParam(auth_key)
         self._callAPI(param)
+
+        # 翻訳先言語が質問と回答をQとAで表現できる場合、
+        # 翻訳後の文字列を" A."の前で分割して2行で表示する
         if self.target_lang in LanguagesUsingQA:
             self._splitReceivedAnswer(self.response["translations"][0]["text"])
             self.status = Status("Finish")
