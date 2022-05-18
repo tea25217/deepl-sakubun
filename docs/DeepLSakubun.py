@@ -4,6 +4,8 @@ from random import randint
 from typing import Literal
 from js import XMLHttpRequest
 
+LanguagesUsingQA = ("EN-GB", "EN-US")
+
 
 @dataclass(slots=True)
 class Status:
@@ -60,10 +62,15 @@ class DeepLSakubun:
             raise Exception
         param = self._generateParam(auth_key)
         self._callAPI(param)
-        self._splitReceivedAnswer(self.response["translations"][0]["text"])
-        self.status = Status("Finish")
-        return (("answer_correct_q", self.answer_correct_q),
-                ("answer_correct_a", self.answer_correct_a))
+        if self.target_lang in LanguagesUsingQA:
+            self._splitReceivedAnswer(self.response["translations"][0]["text"])
+            self.status = Status("Finish")
+            return (("answer_correct_q", self.answer_correct_q),
+                    ("answer_correct_a", self.answer_correct_a))
+        else:
+            self.answer_correct = self.response["translations"][0]["text"]
+            self.status = Status("Finish")
+            return (("answer_correct_q", self.answer_correct))
 
     def _generateParam(self, auth_key):
         URL = "https://api-free.deepl.com/v2/translate"
