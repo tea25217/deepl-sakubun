@@ -107,5 +107,6 @@ class DeepLSakubun:
                      ("btn", "決定"),
                      ("answer_original", ""),
                      ("answer_translated", ""),
-                     ("answer_correct", ""))
+                     ("answer_correct_q", ""),
+                     ("answer_correct_a", ""))
         return newLabels
