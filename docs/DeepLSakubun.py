@@ -51,13 +51,13 @@ class DeepLSakubun:
         self.answer_original = text
         self.target_lang = language
         self.status = Status("WaitingTranslate")
-        newLabels = (("answer_original", "日本語の回答:" + text),
+        newLabels = (("answer_original", text),
                      ("description", "翻訳先の言語で回答してみましょう"))
         return newLabels
 
     def _readTranslatedAnswer(self, text):
         self.answer_translated = text
-        return ("answer_translated", "英語の回答:" + text)
+        return ("answer_translated", text)
 
     def _showCorrectAnswer(self, auth_key):
         if not auth_key:
@@ -66,7 +66,7 @@ class DeepLSakubun:
         self._callAPI(param)
         self.answer_correct = self.response["translations"][0]["text"]
         self.status = Status("Finish")
-        return ("answer_correct", "DeepLによる回答:" + self.answer_correct)
+        return ("answer_correct", self.answer_correct)
 
     def _generateParam(self, auth_key):
         URL = "https://api-free.deepl.com/v2/translate"
