@@ -15,6 +15,7 @@ from js import XMLHttpRequest
 LanguagesUsingQA = ("EN-GB", "EN-US", "JA")
 
 
+# 3状態の単純な決定性有限オートマトン
 @dataclass(slots=True)
 class Status:
     name: Literal["WaitingAnswer", "WaitingTranslate", "Finish"]
