@@ -47,7 +47,7 @@ class DeepLSakubun:
     ↓
     (ユーザー)クリアボタン押下
     ↓
-    (DeepLSakubun)初期状態へ遷移
+    (DeepLSakubun)画面の変更内容を出力、初期状態へ遷移
 
     Attributes:
         questions [List[str]]: question.txtから読み出した全ての質問
