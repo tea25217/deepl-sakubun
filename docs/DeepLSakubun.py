@@ -16,7 +16,7 @@ LanguagesUsingQA = ("EN-GB", "EN-US", "JA")
 
 
 # DeepLSakubunが取る状態
-# (3状態の単純な決定性有限オートマトン)
+# (そういえば3状態の単純な決定性有限オートマトンだこれ)
 @dataclass(slots=True)
 class Status:
     name: Literal["WaitingAnswer", "WaitingTranslate", "Finish"]
