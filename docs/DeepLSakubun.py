@@ -4,7 +4,7 @@ from random import randint
 from typing import Literal
 from js import XMLHttpRequest
 
-LanguagesUsingQA = ("EN-GB", "EN-US")
+LanguagesUsingQA = ("EN-GB", "EN-US", "JA")
 
 
 @dataclass(slots=True)
