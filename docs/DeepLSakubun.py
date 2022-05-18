@@ -21,7 +21,7 @@ class Status:
 
     WaitingAnswer -> WaitingTranslate -> Finish -> WaitingAnswer
     のサイクルで遷移する
-    (そういえば3状態の決定性有限オートマトンかこれ)
+    (3状態の決定性有限オートマトン)
 
     """
     name: Literal["WaitingAnswer", "WaitingTranslate", "Finish"]
