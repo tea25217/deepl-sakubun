@@ -21,6 +21,29 @@ class Status:
 
 
 class DeepLSakubun:
+    """DeepLSakubun
+
+    deepl-sakubunの本体。
+
+    Attributes:
+        questions [List[str]]: question.txtから読み出した全ての質問
+        question [str]: 現在の質問
+        status [Status[Literal
+            ["WaitingAnswer", "WaitingTranslate", "Finish"]]]:
+            現在の状態。
+            "WaitingAnswer": 日本語の回答を待っている
+            "WaitingTranslate": 翻訳先言語の回答を待っている
+            "Finish": DeepLによる回答を出力し終え、状態クリア待ち
+        target_lang [str]: 翻訳先言語。画面で選択したものを受け取る。
+        answer_original [str]: ユーザーが画面で入力した日本語の回答
+        answer_translated [str]: ユーザーが画面で入力した翻訳先言語の回答
+        response [JSON]: DeepL APIのレスポンス
+        answer_correct [str]: DeepLによる翻訳結果
+        answer_correct_q [str]: DeepLによる翻訳結果の質問部分
+        answer_correct_a [str]: DeepLによる翻訳結果の回答部分
+
+    """
+
     def __init__(self):
         self.questions = self._readQuestionFile()
         self.status = Status("WaitingAnswer")
