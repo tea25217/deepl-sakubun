@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
     <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
 
-    <!--Github Pagesの仕様でパスの起点が1個上-->
-    <!--開発環境で動かす時はフォルダを書き換え、/docs/にアクセス-->
-    <!--prod /deepl-sakubun/DeepLSakubun.py-->
-    <!--dev /docs/DeepLSakubun.py-->
-    <!--<py-env>タグの内側にコメントを書くと動かなくなる-->
     <py-env>
-        - paths:
+      # <!--Github Pagesの仕様でパスの起点が1個上-->
+      # <!--開発環境で動かす時はフォルダを書き換え、/docs/にアクセス-->
+      # <!--prod /deepl-sakubun/DeepLSakubun.py-->
+      # <!--dev /docs/DeepLSakubun.py-->
+      # <!--ここはYAMLだから#でコメントアウトだけど、シンタックスハイライトのためにHTMLタグを併用する-->
+      - paths:
             - /deepl-sakubun/DeepLSakubun.py
             - /deepl-sakubun/question.txt
     </py-env>
@@ -30,6 +30,7 @@
         <div class="col-md-3">
           <label>翻訳先言語</label>
           <select id="language" class="form-control">
+            <!--フレームワークを使わずに書き進めたことでテンプレートエンジンが使えず後悔した場所-->
             <option value="EN-GB" selected="selected">英語（イギリス）</option>
             <option value="EN-US">英語（アメリカ）</option>
             <option value="BG">ブルガリア語</option>
