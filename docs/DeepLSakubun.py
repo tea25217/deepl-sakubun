@@ -24,6 +24,24 @@ class DeepLSakubun:
     """DeepLSakubun
 
     deepl-sakubunの本体。
+    index.htmlのハンドラーから画面入力を受け取り、
+    状態に応じた処理結果をlabelタグの変更内容として返す。
+
+    (index.html, 初期状態)画面に質問を表示
+    ↓
+    (ユーザー)テキストエリアに日本語で回答を入力し、決定ボタン押下
+    ↓
+    (DeepLSakubun)画面の変更内容を出力し、翻訳先言語の回答待ち状態に遷移
+    ↓
+    (ユーザー)テキストエリアに翻訳先言語で回答を入力し、決定ボタン押下
+    ↓
+    (DeepLSakubun)DeepLの翻訳APIに質問と入力された日本語回答を結合してPOST
+    ↓
+    (DeepLSakubun)APIのレスポンスをパースし、画面の変更内容を出力、完了状態へ遷移
+    ↓
+    (ユーザー)クリアボタン押下
+    ↓
+    (DeepLSakubun)初期状態へ遷移
 
     Attributes:
         questions [List[str]]: question.txtから読み出した全ての質問
