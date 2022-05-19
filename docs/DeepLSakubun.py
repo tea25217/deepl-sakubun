@@ -9,7 +9,6 @@ from dataclasses import dataclass
 import json
 from random import randint
 from typing import List, Literal, Tuple
-from js import XMLHttpRequest
 
 # 質問と回答をQ. ... A. ... で表す言語
 LanguagesUsingQA = ("EN-GB", "EN-US", "JA")
@@ -147,6 +146,8 @@ class DeepLSakubun:
         return param
 
     def _callAPI(self, param: dict[str, str | dict[str, str]]) -> None:
+        # モジュールテストを可能にするため、PyScriptのjsモジュールはlazy importする
+        from js import XMLHttpRequest
         req = XMLHttpRequest.new()
         req.open("POST", param["URL"], False)
         for k, v in param["headers"].items():
