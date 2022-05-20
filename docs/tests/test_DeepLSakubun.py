@@ -4,6 +4,7 @@
 モジュールの入出力をざっくりと確認する。
 
 """
+import os
 from typing import Tuple
 import pytest
 import docs.DeepLSakubun as DeepLSakubun
@@ -17,13 +18,16 @@ NEW_TRANSLATED_ANSWER_A = " A. BBBBBBBB"
 
 
 def mock_callAPI(self, *_) -> None:
-    self.response = {"translations": [{"text": TRANSLATED_ANSWER}]}
+    os.getenv("TRANSLATED_ANSWER")
+    res = {"translations": [{"text": os.getenv("TRANSLATED_ANSWER")}]}
+    self.response = res
 
 
 @pytest.fixture
 def deepLSakubun(monkeypatch) -> DeepLSakubun:
     monkeypatch.setattr(
         "docs.DeepLSakubun.DeepLSakubun._callAPI", mock_callAPI)
+    monkeypatch.setenv("TRANSLATED_ANSWER", TRANSLATED_ANSWER)
 
     deepLSakubun = DeepLSakubun.DeepLSakubun()
     deepLSakubun.chooseAQuestion()
@@ -138,7 +142,7 @@ class Test_DeepLSakubun_WaitingTranslate:
         assert expected_status == actual_status
 
     def test_二周目以降_新しい回答を元に画面変更内容を出力できること(
-            self, appWaitingTranslate, default_input_translated):
+            self, monkeypatch, appWaitingTranslate, default_input_translated):
         old_output_answer_translated = (
             "answer_translated", default_input_translated[0])
         old_output_answer_correct_q = (
@@ -154,6 +158,8 @@ class Test_DeepLSakubun_WaitingTranslate:
 
         loop_status(appWaitingTranslate, default_input_translated)
         new_input = ("Some stupid answer", "XXXX", "EN-GB")
+        monkeypatch.setenv("TRANSLATED_ANSWER", NEW_TRANSLATED_ANSWER)
+
         actual_output = appWaitingTranslate.onClick(*new_input)
 
         assert old_output_answer_translated not in actual_output
@@ -162,9 +168,6 @@ class Test_DeepLSakubun_WaitingTranslate:
         assert expected_output_answer_translated in actual_output
         assert expected_output_answer_correct_q in actual_output
         assert expected_output_answer_correct_a in actual_output
-
-        # TODO モックを作り直す
-
 
     def test_選択した言語が_callAPIの引数に渡されること(self):
         ...
