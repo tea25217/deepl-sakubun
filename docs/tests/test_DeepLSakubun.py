@@ -8,9 +8,13 @@ from typing import Tuple
 import pytest
 import docs.DeepLSakubun as DeepLSakubun
 
+TEST_TRANSLATED_ANSWER = "Q. QQQQQQQQ A. AAAAAAAA"
+TEST_TRANSLATED_ANSWER_Q = "Q. QQQQQQQQ"
+TEST_TRANSLATED_ANSWER_A = " A. AAAAAAAA"
+
 
 def mock_callAPI(self, *_) -> None:
-    res = {"translations": [{"text": "Q. QQQQQQQQ A. AAAAAAAA"}]}
+    res = {"translations": [{"text": TEST_TRANSLATED_ANSWER}]}
     self.response = res
 
 
@@ -36,6 +40,15 @@ def appWaitingTranslate(deepLSakubun, default_input):
 @pytest.fixture
 def default_input() -> Tuple[str]:
     return ("なんか気の利いた回答", "XXXX", "EN-GB")
+
+
+@pytest.fixture
+def default_input_translated() -> Tuple[str]:
+    return ("Some smart answer", "XXXX", "EN-GB")
+
+
+def loop_status(deepLSakubun, any_input):
+    [deepLSakubun.onClick(*any_input) for _ in range(3)]
 
 
 class Test_DeepLSakubun__init__:
@@ -80,15 +93,37 @@ class Test_DeepLSakubun_WaitingAnswer:
 
         assert expected_status == actual_status
 
-    def test_二周目以降_新しい回答を元に画面変更内容を出力できること(self):
-        ...
+    def test_二周目以降_新しい回答を元に画面変更内容を出力できること(self, deepLSakubun, default_input):
+        old_answer_original = ("answer_original", default_input[0])
+        expected_answer_original = ("answer_original", "それなりの回答")
+
+        loop_status(deepLSakubun, default_input)
+        new_input = ("それなりの回答", "XXXX", "EN-GB")
+        new_output = deepLSakubun.onClick(*new_input)
+
+        assert expected_answer_original in new_output
+        assert old_answer_original not in new_output
 
 
 class Test_DeepLSakubun_WaitingTranslate:
 
     def test_翻訳先言語の回答を受け取り_画面の変更内容を出力できること(
-            self, appWaitingTranslate, default_input):
-        ...
+            self, appWaitingTranslate, default_input_translated):
+        expected_output_answer_translated = (
+            "answer_translated", default_input_translated[0])
+        expected_output_answer_correct_q = (
+            "answer_correct_q", TEST_TRANSLATED_ANSWER_Q)
+        expected_output_answer_correct_a = (
+            "answer_correct_a", TEST_TRANSLATED_ANSWER_A)
+        expected_output_button = ("btn", "クリア")
+        assert default_input_translated[2] in DeepLSakubun.LanguagesUsingQA
+
+        actual_output = appWaitingTranslate.onClick(*default_input_translated)
+
+        assert expected_output_answer_translated in actual_output
+        assert expected_output_answer_correct_q in actual_output
+        assert expected_output_answer_correct_a in actual_output
+        assert expected_output_button in actual_output
 
     def test_ステータスがFinishに遷移すること(self, appWaitingTranslate, default_input):
         expected_status = DeepLSakubun.Status("Finish")
@@ -100,8 +135,24 @@ class Test_DeepLSakubun_WaitingTranslate:
 
         assert expected_status == actual_status
 
-    def test_二周目以降_新しい回答を元に画面変更内容を出力できること(self):
-        ...
+    def test_二周目以降_新しい回答を元に画面変更内容を出力できること(
+            self, appWaitingTranslate, default_input_translated):
+        old_output_answer_translated = (
+            "answer_translated", default_input_translated[0])
+        old_output_answer_correct_q = (
+            "answer_correct_q", TEST_TRANSLATED_ANSWER_Q)
+        old_output_answer_correct_a = (
+            "answer_correct_a", TEST_TRANSLATED_ANSWER_A)
+        expected_output_answer_translated = (
+            "answer_translated", default_input_translated[0])
+        expected_output_answer_correct_q = (
+            "answer_correct_q", TEST_TRANSLATED_ANSWER_Q)
+        expected_output_answer_correct_a = (
+            "answer_correct_a", TEST_TRANSLATED_ANSWER_A)
+
+        loop_status(appWaitingTranslate, default_input_translated)
+        # TODO モックを作り直す
+
 
     def test_選択した言語が_callAPIの引数に渡されること(self):
         ...
