@@ -4,6 +4,7 @@
 モジュールの入出力をざっくりと確認する。
 
 """
+from typing import Tuple
 import pytest
 import docs.DeepLSakubun
 
@@ -15,7 +16,12 @@ def deepLSakubun() -> docs.DeepLSakubun:
     return deepLSakubun
 
 
-class Test_DeepLSakubun__init__():
+@pytest.fixture
+def default_input() -> Tuple[str]:
+    return ("なんか気の利いた回答", "", "EN-GB")
+
+
+class Test_DeepLSakubun__init__:
 
     def test_インスタンス生成できて_必要なインスタンス変数がある(self):
         instance = docs.DeepLSakubun.DeepLSakubun()
@@ -37,29 +43,31 @@ class Test_DeepLSakubun__init__():
             assert False
 
 
-class Test_DeepLSakubun_WaitingAnswer():
+class Test_DeepLSakubun_WaitingAnswer:
 
-    def test_日本語の回答を受け取り_画面の変更内容を出力できる(self, deepLSakubun):
-        input_text = "なんか気の利いた回答"
-        auth_key = ""
-        language = "EN-GB"
-
-        expected_output_answer_original = ("answer_original", input_text)
+    def test_日本語の回答を受け取り_画面の変更内容を出力できる(self, deepLSakubun, default_input):
+        expected_output_answer_original = ("answer_original", default_input[0])
         expected_output_description = ("description", "翻訳先の言語で回答してみましょう")
 
-        actual_output = deepLSakubun.onClick(input_text, auth_key, language)
+        actual_output = deepLSakubun.onClick(*default_input)
 
         assert expected_output_answer_original in actual_output
         assert expected_output_description in actual_output
 
-    def test_ステータスがWaitingTranslateに遷移する(self):
-        ...
+    def test_ステータスがWaitingTranslateに遷移する(self, deepLSakubun, default_input):
+        expected_status = docs.DeepLSakubun.Status("WaitingTranslate")
+
+        assert deepLSakubun.status == docs.DeepLSakubun.Status("WaitingAnswer")
+        deepLSakubun.onClick(*default_input)
+        actual_status = deepLSakubun.status
+
+        assert expected_status == actual_status
 
     def test_二周目以降_新しい回答を元に画面変更内容を出力できる(self):
         ...
 
 
-class Test_DeepLSakubun_WaitingTranslate():
+class Test_DeepLSakubun_WaitingTranslate:
 
     def test_翻訳先言語の回答を受け取り_画面の変更内容を出力できる(self, deepLSakubun):
         ...
@@ -83,7 +91,7 @@ class Test_DeepLSakubun_WaitingTranslate():
         ...
 
 
-class Test_DeepLSakubun_Finish():
+class Test_DeepLSakubun_Finish:
 
     def test_変数を空にして_画面の変更内容を出力できる(self, deepLSakubun):
         ...
@@ -92,7 +100,7 @@ class Test_DeepLSakubun_Finish():
         ...
 
 
-class Test_others():
+class Test_others:
 
     def test_存在しないステータスでonClickを叩くと例外を吐く(self):
         ...
