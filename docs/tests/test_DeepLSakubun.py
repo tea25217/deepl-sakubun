@@ -17,10 +17,22 @@ NEW_TRANSLATED_ANSWER_Q = "Q. PPPPPPPP"
 NEW_TRANSLATED_ANSWER_A = " A. BBBBBBBB"
 
 
-def mock_callAPI(self, *_) -> None:
+def mock_callAPI(self, param: dict[str, str | dict[str, str]]) -> None:
     os.getenv("TRANSLATED_ANSWER")
     res = {"translations": [{"text": os.getenv("TRANSLATED_ANSWER")}]}
     self.response = res
+
+
+# _callAPIの引数確認用
+def mock_showCorrectAnswer(self, auth_key: str) -> Tuple[Tuple[str, str]]:
+    if not auth_key:
+        raise Exception
+    param = self._generateParam(auth_key)
+    # paramを保持できるようにする
+    self.param = param
+    self._callAPI(param)
+
+    return self._decideToSplitAnswer()
 
 
 @pytest.fixture
@@ -169,8 +181,25 @@ class Test_DeepLSakubun_WaitingTranslate:
         assert expected_output_answer_correct_q in actual_output
         assert expected_output_answer_correct_a in actual_output
 
-    def test_選択した言語が_callAPIの引数に渡されること(self):
-        ...
+    def test_onClickの引数を元にcallAPIの引数が生成されること(
+            self, monkeypatch,
+            deepLSakubun, default_input, default_input_translated):
+        deepLSakubun.onClick(*default_input)
+
+        URL = "https://api-free.deepl.com/v2/translate"
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        body = "auth_key=" + default_input_translated[1] + \
+            "&text=Q." + deepLSakubun.question + \
+            " A." + deepLSakubun.answer_original + \
+            "&target_lang=" + default_input_translated[2]
+        expected_param = {"URL": URL, "headers": headers, "body": body}
+
+        monkeypatch.setattr(
+            "docs.DeepLSakubun.DeepLSakubun._showCorrectAnswer",
+            mock_showCorrectAnswer)
+        deepLSakubun.onClick(*default_input_translated)
+
+        assert expected_param == deepLSakubun.param
 
     def test_APIキー未入力の場合は例外を吐くこと(self, appWaitingTranslate):
         with pytest.raises(Exception):

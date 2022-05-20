@@ -123,6 +123,9 @@ class DeepLSakubun:
         param = self._generateParam(auth_key)
         self._callAPI(param)
 
+        return self._decideToSplitAnswer()
+
+    def _decideToSplitAnswer(self) -> Tuple[Tuple[str, str]]:
         # 翻訳先言語が質問と回答をQとAで表現できる場合、
         # 翻訳後の文字列を" A."の前で分割して2行で表示する
         if self.target_lang in LanguagesUsingQA:
