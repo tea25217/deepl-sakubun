@@ -64,6 +64,18 @@ class Test_DeepLSakubun_WaitingTranslate():
     def test_二周目以降_正しいラベルを出力できる(self):
         ...
 
+    def test_選択した言語で翻訳される(self):
+        ...
+
+    def test_APIキー未入力の場合は例外を吐く(self):
+        ...
+
+    def test_分割判定可能な言語ではDeepLの回答を質問と答えに分割して出力する(self):
+        ...
+
+    def test_分割判定できない言語ではDeepLの回答を1つのタプルで出力する(self):
+        ...
+
 
 class Test_DeepLSakubun_Finish():
 
