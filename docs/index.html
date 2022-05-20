@@ -15,8 +15,8 @@
       # <!--dev /docs/DeepLSakubun.py-->
       # <!--ここはYAMLだから#でコメントアウトだけど、シンタックスハイライトのためにHTMLタグを併用する-->
       - paths:
-            - /deepl-sakubun/DeepLSakubun.py
-            - /deepl-sakubun/question.txt
+            - /docs/DeepLSakubun.py
+            - /docs/question.txt
     </py-env>
   </head>
 
@@ -100,15 +100,15 @@ def setLabelText(id, text, *ags, **kws):
 
 
 def handler(*ags, **kws):
-    text = Element("sakubun").element.value
+    text = Element("sakubun").value
     Element("sakubun").clear()
-    auth_key = Element("auth_key").element.value
-    language = Element("language").element.value
+    auth_key = Element("auth_key").value
+    language = Element("language").value
 
     newLabels = deepLSakubun.onClick(text, auth_key, language)
     for label in newLabels:
         setLabelText(*label)
-
+    Element("language").value.clear()
 
 deepLSakubun = DeepLSakubun.DeepLSakubun()
 setLabelText("question", deepLSakubun.chooseAQuestion())
