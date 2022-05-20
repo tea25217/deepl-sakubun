@@ -6,12 +6,12 @@
 """
 from typing import Tuple
 import pytest
-import docs.DeepLSakubun
+import docs.DeepLSakubun as DeepLSakubun
 
 
 @pytest.fixture
-def deepLSakubun() -> docs.DeepLSakubun:
-    deepLSakubun = docs.DeepLSakubun.DeepLSakubun()
+def deepLSakubun() -> DeepLSakubun:
+    deepLSakubun = DeepLSakubun.DeepLSakubun()
     deepLSakubun.chooseAQuestion()
     return deepLSakubun
 
@@ -24,12 +24,12 @@ def default_input() -> Tuple[str]:
 class Test_DeepLSakubun__init__:
 
     def test_インスタンス生成できて_必要なインスタンス変数がある(self):
-        instance = docs.DeepLSakubun.DeepLSakubun()
+        instance = DeepLSakubun.DeepLSakubun()
         assert len(instance.questions) > 1
-        assert instance.status == docs.DeepLSakubun.Status("WaitingAnswer")
+        assert instance.status == DeepLSakubun.Status("WaitingAnswer")
 
     def test_chooseAQuestionでランダムに質問を取得できる(self):
-        instance = docs.DeepLSakubun.DeepLSakubun()
+        instance = DeepLSakubun.DeepLSakubun()
         assert instance.chooseAQuestion()
         assert instance.question
 
@@ -55,9 +55,9 @@ class Test_DeepLSakubun_WaitingAnswer:
         assert expected_output_description in actual_output
 
     def test_ステータスがWaitingTranslateに遷移する(self, deepLSakubun, default_input):
-        expected_status = docs.DeepLSakubun.Status("WaitingTranslate")
+        expected_status = DeepLSakubun.Status("WaitingTranslate")
 
-        assert deepLSakubun.status == docs.DeepLSakubun.Status("WaitingAnswer")
+        assert deepLSakubun.status == DeepLSakubun.Status("WaitingAnswer")
         deepLSakubun.onClick(*default_input)
         actual_status = deepLSakubun.status
 
