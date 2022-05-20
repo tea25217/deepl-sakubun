@@ -13,7 +13,10 @@ import docs.DeepLSakubun as DeepLSakubun
 def deepLSakubun() -> DeepLSakubun:
     deepLSakubun = DeepLSakubun.DeepLSakubun()
     deepLSakubun.chooseAQuestion()
-    return deepLSakubun
+    yield deepLSakubun
+    poststate = \
+        [(k, v) for k, v in deepLSakubun.__dict__.items() if k != "questions"]
+    print(poststate)
 
 
 @pytest.fixture
