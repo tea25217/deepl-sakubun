@@ -8,14 +8,16 @@ from typing import Tuple
 import pytest
 import docs.DeepLSakubun as DeepLSakubun
 
-TEST_TRANSLATED_ANSWER = "Q. QQQQQQQQ A. AAAAAAAA"
-TEST_TRANSLATED_ANSWER_Q = "Q. QQQQQQQQ"
-TEST_TRANSLATED_ANSWER_A = " A. AAAAAAAA"
+TRANSLATED_ANSWER = "Q. QQQQQQQQ A. AAAAAAAA"
+TRANSLATED_ANSWER_Q = "Q. QQQQQQQQ"
+TRANSLATED_ANSWER_A = " A. AAAAAAAA"
+NEW_TRANSLATED_ANSWER = "Q. PPPPPPPP A. BBBBBBBB"
+NEW_TRANSLATED_ANSWER_Q = "Q. PPPPPPPP"
+NEW_TRANSLATED_ANSWER_A = " A. BBBBBBBB"
 
 
 def mock_callAPI(self, *_) -> None:
-    res = {"translations": [{"text": TEST_TRANSLATED_ANSWER}]}
-    self.response = res
+    self.response = {"translations": [{"text": TRANSLATED_ANSWER}]}
 
 
 @pytest.fixture
@@ -112,9 +114,9 @@ class Test_DeepLSakubun_WaitingTranslate:
         expected_output_answer_translated = (
             "answer_translated", default_input_translated[0])
         expected_output_answer_correct_q = (
-            "answer_correct_q", TEST_TRANSLATED_ANSWER_Q)
+            "answer_correct_q", TRANSLATED_ANSWER_Q)
         expected_output_answer_correct_a = (
-            "answer_correct_a", TEST_TRANSLATED_ANSWER_A)
+            "answer_correct_a", TRANSLATED_ANSWER_A)
         expected_output_button = ("btn", "クリア")
         assert default_input_translated[2] in DeepLSakubun.LanguagesUsingQA
 
@@ -140,17 +142,27 @@ class Test_DeepLSakubun_WaitingTranslate:
         old_output_answer_translated = (
             "answer_translated", default_input_translated[0])
         old_output_answer_correct_q = (
-            "answer_correct_q", TEST_TRANSLATED_ANSWER_Q)
+            "answer_correct_q", TRANSLATED_ANSWER_Q)
         old_output_answer_correct_a = (
-            "answer_correct_a", TEST_TRANSLATED_ANSWER_A)
+            "answer_correct_a", TRANSLATED_ANSWER_A)
         expected_output_answer_translated = (
-            "answer_translated", default_input_translated[0])
+            "answer_translated", "Some stupid answer")
         expected_output_answer_correct_q = (
-            "answer_correct_q", TEST_TRANSLATED_ANSWER_Q)
+            "answer_correct_q", NEW_TRANSLATED_ANSWER_Q)
         expected_output_answer_correct_a = (
-            "answer_correct_a", TEST_TRANSLATED_ANSWER_A)
+            "answer_correct_a", NEW_TRANSLATED_ANSWER_A)
 
         loop_status(appWaitingTranslate, default_input_translated)
+        new_input = ("Some stupid answer", "XXXX", "EN-GB")
+        actual_output = appWaitingTranslate.onClick(*new_input)
+
+        assert old_output_answer_translated not in actual_output
+        assert old_output_answer_correct_q not in actual_output
+        assert old_output_answer_correct_a not in actual_output
+        assert expected_output_answer_translated in actual_output
+        assert expected_output_answer_correct_q in actual_output
+        assert expected_output_answer_correct_a in actual_output
+
         # TODO モックを作り直す
 
 
@@ -180,4 +192,7 @@ class Test_DeepLSakubun_Finish:
 class Test_others:
 
     def test_存在しないステータスでonClickを叩くと例外を吐くこと(self):
+        ...
+
+    def test_onClickを叩くたびに次のステータスへ遷移すること(self):
         ...
