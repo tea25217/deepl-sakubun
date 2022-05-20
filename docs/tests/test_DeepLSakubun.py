@@ -69,3 +69,9 @@ class Test_DeepLSakubun_Finish():
 
     def test_変数を空にして_画面の変更内容を出力できる(self, deepLSakubun):
         ...
+
+
+class Test_others():
+
+    def test_存在しないステータスでonClickを叩くと例外を吐く(self):
+        ...
