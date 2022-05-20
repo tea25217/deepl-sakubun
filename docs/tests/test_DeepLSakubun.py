@@ -62,7 +62,7 @@ def default_input() -> Tuple[str]:
 
 @pytest.fixture
 def default_input_translated() -> Tuple[str]:
-    return ("Some smart answer", "XXXX", "EN-GB")
+    return ("Some smart answer", "XXXX", "EN-US")
 
 
 def loop_status(deepLSakubun, any_input):
