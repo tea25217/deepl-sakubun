@@ -55,22 +55,22 @@ class Test_DeepLSakubun_WaitingAnswer():
     def test_ステータスがWaitingTranslateに遷移する(self):
         ...
 
-    def test_二周目以降_正しいラベルを出力できる(self):
+    def test_二周目以降_新しい回答を元に画面変更内容を出力できる(self):
         ...
 
 
 class Test_DeepLSakubun_WaitingTranslate():
 
-    def test_日本語の回答を受け取り_画面の変更内容を出力できる(self, deepLSakubun):
+    def test_翻訳先言語の回答を受け取り_画面の変更内容を出力できる(self, deepLSakubun):
         ...
 
     def test_ステータスがFinishに遷移する(self):
         ...
 
-    def test_二周目以降_正しいラベルを出力できる(self):
+    def test_二周目以降_新しい回答を元に画面変更内容を出力できる(self):
         ...
 
-    def test_選択した言語で翻訳される(self):
+    def test_選択した言語が_callAPIの引数に渡される(self):
         ...
 
     def test_APIキー未入力の場合は例外を吐く(self):
