@@ -51,3 +51,21 @@ class Test_DeepLSakubun_WaitingAnswer():
 
         assert expected_output_answer_original in actual_output
         assert expected_output_description in actual_output
+
+    def test_二周目以降_正しいラベルを出力できる(self):
+        ...
+
+
+class Test_DeepLSakubun_WaitingTranslate():
+
+    def test_日本語の回答を受け取り_画面の変更内容を出力できる(self, deepLSakubun):
+        ...
+
+    def test_二周目以降_正しいラベルを出力できる(self):
+        ...
+
+
+class Test_DeepLSakubun_Finish():
+
+    def test_変数を空にして_画面の変更内容を出力できる(self, deepLSakubun):
+        ...
