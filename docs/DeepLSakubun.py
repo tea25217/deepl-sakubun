@@ -88,11 +88,11 @@ class DeepLSakubun:
         match self.status:
             # 日本語の回答を受け付ける状態
             case Status("WaitingAnswer"):
-                newLabels = self._readOriginalAnswer(text, language)
+                newLabels = self._readOriginalAnswer(text)
             # 翻訳先言語の回答を受け付ける状態
             case Status("WaitingTranslate"):
                 newLabels = []
-                newLabels.append(self._readTranslatedAnswer(text))
+                newLabels.append(self._readTranslatedAnswer(text, language))
                 for label in self._showCorrectAnswer(auth_key):
                     newLabels.append(label)
                 newLabels.append(("btn", "クリア"))
@@ -103,17 +103,18 @@ class DeepLSakubun:
                 raise Exception
         return newLabels
 
-    def _readOriginalAnswer(self, text: str, language: str) \
+    def _readOriginalAnswer(self, text: str) \
             -> Tuple[Tuple[str, str]]:
         self.answer_original = text
-        self.target_lang = language
         self.status = Status("WaitingTranslate")
         newLabels = (("answer_original", text),
                      ("description", "翻訳先の言語で回答してみましょう"))
         return newLabels
 
-    def _readTranslatedAnswer(self, text: str) -> Tuple[str, str]:
+    def _readTranslatedAnswer(self, text: str, language: str) \
+            -> Tuple[str, str]:
         self.answer_translated = text
+        self.target_lang = language
         return ("answer_translated", text)
 
     def _showCorrectAnswer(self, auth_key: str) -> Tuple[Tuple[str, str]]:
