@@ -206,11 +206,34 @@ class Test_DeepLSakubun_WaitingTranslate:
         with pytest.raises(Exception):
             appWaitingTranslate.onClick("気の利いてない回答", "", "EN-GB")
 
-    def test_分割可能な言語ではDeepLの回答を質問と答えに分割して出力すること(self):
-        ...
+    def test_分割可能な言語ではDeepLの回答を質問と答えに分割して出力すること(
+            self, appWaitingTranslate, default_input_translated):
+        assert default_input_translated[2] in DeepLSakubun.LanguagesUsingQA
 
-    def test_分割できない言語ではDeepLの回答を1つのタプルで出力すること(self):
-        ...
+        expected_output_answer_correct_q = (
+            "answer_correct_q", TRANSLATED_ANSWER_Q)
+        expected_output_answer_correct_a = (
+            "answer_correct_a", TRANSLATED_ANSWER_A)
+
+        actual_output = appWaitingTranslate.onClick(*default_input_translated)
+
+        assert expected_output_answer_correct_q in actual_output
+        assert expected_output_answer_correct_a in actual_output
+
+    def test_分割できない言語ではDeepLの回答を1つのタプルで出力すること(
+            self, appWaitingTranslate):
+        input_cannot_split = ("Nie można go podzielić.", "XXXX", "PL")
+        assert input_cannot_split[2] not in DeepLSakubun.LanguagesUsingQA
+
+        expected_output_answer_correct_q = (
+            "answer_correct_q", input_cannot_split[0])
+
+        actual_output = appWaitingTranslate.onClick(*input_cannot_split)
+
+        assert expected_output_answer_correct_q in actual_output
+        for label in actual_output:
+            if label[0] == "answer_correct_a" and label[0] != "":
+                assert False
 
 
 class Test_DeepLSakubun_Finish:
