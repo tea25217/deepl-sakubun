@@ -221,13 +221,15 @@ class Test_DeepLSakubun_WaitingTranslate:
         assert expected_output_answer_correct_a in actual_output
 
     def test_分割できない言語ではDeepLの回答を1つのタプルで出力すること(
-            self, appWaitingTranslate):
+            self, monkeypatch, appWaitingTranslate):
         input_cannot_split = ("Nie można go podzielić.", "XXXX", "PL")
         assert input_cannot_split[2] not in DeepLSakubun.LanguagesUsingQA
+        TRANSLATED_ANSWER_CANNOT_SPLIT = "Nie można jej podzielić."
 
         expected_output_answer_correct_q = (
-            "answer_correct_q", input_cannot_split[0])
+            "answer_correct_q", TRANSLATED_ANSWER_CANNOT_SPLIT)
 
+        monkeypatch.setenv("TRANSLATED_ANSWER", TRANSLATED_ANSWER_CANNOT_SPLIT)
         actual_output = appWaitingTranslate.onClick(*input_cannot_split)
 
         assert expected_output_answer_correct_q in actual_output
