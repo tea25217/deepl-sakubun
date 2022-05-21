@@ -2,7 +2,7 @@
 """
 import json
 from typing import Tuple
-from docs.Common import Language, Status
+from Common import Language, Status
 
 # 質問と回答をQ. ... A. ... で表す言語
 LANGUAGES_USING_QA = Language.getLanguagesFromSeparatorGroup("QA")

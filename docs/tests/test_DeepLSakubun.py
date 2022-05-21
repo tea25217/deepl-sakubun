@@ -4,12 +4,17 @@
 入出力をざっくりと確認する。
 (DeepLSakubunをリファクタリングしたら結合テストに化けた)
 
+！！！注意！！！
+現状、実行前にテスト対象モジュール全てのimport文をdocs.DeepLSakubun等、
+頭にdocs.をつけないと動かない。
+面倒過ぎるからなんか対策を思いつきたい。
+
 """
 import os
 from typing import Tuple
-from docs.Common import Language
+from Common import Language
 import pytest
-import docs.DeepLSakubun as DeepLSakubun
+import DeepLSakubun as DeepLSakubun
 
 TRANSLATED_ANSWER = "Q. QQQQQQQQ A. AAAAAAAA"
 TRANSLATED_ANSWER_Q = "Q. QQQQQQQQ"
@@ -41,7 +46,7 @@ def mock_showCorrectAnswer(self, auth_key: str) -> Tuple[Tuple[str, str]]:
 @pytest.fixture
 def deepLSakubun(monkeypatch) -> DeepLSakubun:
     monkeypatch.setattr(
-        "docs.DeepLSakubun.DeepLSakubun._callAPI", mock_callAPI)
+        "DeepLSakubun.DeepLSakubun._callAPI", mock_callAPI)
     monkeypatch.setenv("TRANSLATED_ANSWER", TRANSLATED_ANSWER)
 
     deepLSakubun = DeepLSakubun.DeepLSakubun()
@@ -198,7 +203,7 @@ class Test_DeepLSakubun_WaitingTranslate:
         expected_param = {"URL": URL, "headers": headers, "body": body}
 
         monkeypatch.setattr(
-            "docs.DeepLSakubun.DeepLSakubun._showCorrectAnswer",
+            "DeepLSakubun.DeepLSakubun._showCorrectAnswer",
             mock_showCorrectAnswer)
         deepLSakubun.onClick(*default_input_translated)
 

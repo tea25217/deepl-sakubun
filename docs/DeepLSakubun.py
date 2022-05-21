@@ -7,10 +7,10 @@ DOM操作はDeepLSakubun.onClickから対象のidと値を返してindex.htmlで
 """
 from random import randint
 from typing import List, Tuple
-from docs.Common import Status
-from docs.DeepLSakubunFinish import DeepLSakubunFinish
-from docs.DeepLSakubunWaitingAnswer import DeepLSakubunWaitingAnswer
-from docs.DeepLSakubunWaitingTranslate import DeepLSakubunWaitingTranslate
+from Common import Status
+from DeepLSakubunFinish import DeepLSakubunFinish
+from DeepLSakubunWaitingAnswer import DeepLSakubunWaitingAnswer
+from DeepLSakubunWaitingTranslate import DeepLSakubunWaitingTranslate
 
 
 class DeepLSakubun(DeepLSakubunWaitingAnswer,

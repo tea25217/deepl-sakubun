@@ -1,7 +1,7 @@
 """ステータスWaitingAnswerの処理
 """
 from typing import Tuple
-from docs.Common import Status
+from Common import Status
 
 
 class DeepLSakubunWaitingAnswer:
