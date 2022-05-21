@@ -83,6 +83,7 @@ class DeepLSakubun:
         self.question = self.questions[idx]
         return self.question
 
+    # 各caseを別クラスに切り出したい(やり方は検討)
     def onClick(self, text: str, auth_key: str, language: str, *args) \
             -> Tuple[Tuple[str, str]] | List[Tuple[str, str]]:
         match self.status:
