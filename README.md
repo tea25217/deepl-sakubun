@@ -1,13 +1,13 @@
 ## DeepLで外国語練習するやつ
 
 
-### 場所
+### **場所**
 ここ<br>
 https://tea25217.github.io/deepl-sakubun/<br>
 （PyScriptの仕様上ページ読み込みに少し時間がかかります）<br>
 <br>
 
-### 概要
+### **概要**
 DeepL翻訳の機能を利用して外国語のライティングを練習するアプリです。<br>
 [Englister](https://english.yunomy.com/)や[Deep英作文](https://deep-eisakubun.vercel.app/)のパチモン。<br>
 <br>
@@ -20,7 +20,7 @@ API仕様のtarget_langに記載されている言語に対応しています。
 https://www.deepl.com/ja/docs-api/translating-text/request/<br>
 <br>
 
-### 使い方
+### **使い方**
 準備：
 - APIキー(画面左上の枠)をセット
 - 画面右上の翻訳先言語から練習したい言語を選択
