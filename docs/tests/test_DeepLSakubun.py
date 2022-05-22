@@ -4,12 +4,14 @@
 入出力をざっくりと確認する。
 (DeepLSakubunをリファクタリングしたら結合テストに化けた)
 
-＜現状の問題＞
+＜現状の課題＞
 実行前にテスト対象モジュール全てのimportをdocs.DeepLSakubun等、
 頭にdocs.を付けないと動かない。
 現時点でPyScriptはディレクトリの指定を解釈できなさそう？なので、
 docs.を付けておくことはできない。
-（pathsに突っ込んでみたが対象をディレクトリとして解釈してくれなかった）
+→ソースを見た感じ<py-env>pathsの指定はstringで渡せばPackage扱いのため、'/../../docs'にしたら通った。
+　しかしpythonソースのfrom docs.Common import Statusやfrom .Common import Statusは
+　docsを名前解決できず。
 （仮に解決したら今度はGithub Pagesのパスの仕様と衝突しそう）
 
 """
