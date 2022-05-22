@@ -113,7 +113,6 @@ def handler(*ags, **kws):
     newLabels = deepLSakubun.onClick(text, auth_key, language)
     for label in newLabels:
         setLabelText(*label)
-    Element("language").value.clear()
 
 
 if __name__=="__main__":
