@@ -1,6 +1,7 @@
 """ステータスWaitingTranslateの処理
 """
 import json
+import os
 from typing import Tuple
 from Common import Language, Status
 
@@ -18,7 +19,11 @@ class DeepLSakubunWaitingTranslate:
     def _showCorrectAnswer(self, auth_key: str) -> Tuple[Tuple[str, str]]:
         # DeepLのAPIを叩く
         if not auth_key:
+            auth_key = os.getenv("DEEPL_API_KEY_FREE")
+
+        if not auth_key:
             raise Exception
+
         param = self._generateParam(auth_key)
         self._callAPI(param)
 
