@@ -23,7 +23,7 @@ jobs:
         DEEPL_API_KEY_FREE: ${{ secrets.DEEPL_API_KEY_FREE }}
 
     - name: Deploy
-      uses: JamesIves/github-pages-deploy-action@releases/v4.3.3
+      uses: JamesIves/github-pages-deploy-action@v4.3.3
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BRANCH: gh-pages
