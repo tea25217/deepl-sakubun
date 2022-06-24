@@ -3,14 +3,17 @@
 現段階で粒度の細かいテストを増やしてもテストコードが即寿命を迎えかねないので、
 入出力をざっくりと確認する。
 
+
 ＜現状の課題＞
+
 実行前にテスト対象モジュール全てのimportをdocs.DeepLSakubun等、
 頭にdocs.を付けないと動かない。
 現時点でPyScriptはディレクトリ指定を解釈できなさそう？なので、
 docs.を付けておくことはできない。
-→PyScriptのソースを見た感じ、<py-env>pathsの指定はstringで渡せばPackage扱いのため、'/../../docs'にしたら通った。
-　しかしPythonソースのfrom docs.Common import Statusやfrom .Common import Statusについては、
-　docsを名前解決できず。
+
+PyScriptのソースを見た感じ、<py-env>pathsの指定はstringで渡せばPackage扱いのため、'/../../docs'にしたら通った。
+しかしPythonソースのfrom docs.Common import Statusやfrom .Common import Statusについては、
+docsを名前解決できず。
 （仮に解決したら今度はGithub Pagesのパスの仕様と衝突しそう）
 
 """
