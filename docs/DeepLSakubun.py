@@ -1,7 +1,7 @@
 """DeepLSakubun.py
 
 deepl-sakubunの本体。
-DOM操作はDeepLSakubun.onClickから対象のidと値を返してindex.htmlでやる。
+DOM操作はDeepLSakubun.execから対象のidと値を返してindex.htmlでやる。
 それ以外はここでやる。
 
 """
@@ -78,7 +78,7 @@ class DeepLSakubun(DeepLSakubunWaitingAnswer,
         self.question = self.questions[idx]
         return self.question
 
-    def onClick(self, text: str, auth_key: str, language: str, *args) \
+    def exec(self, text: str, auth_key: str, language: str, *args) \
             -> Tuple[Tuple[str, str]] | List[Tuple[str, str]]:
         match self.status:
             # 日本語の回答を受け付ける状態

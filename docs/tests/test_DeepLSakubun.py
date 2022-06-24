@@ -66,7 +66,7 @@ def deepLSakubun(monkeypatch) -> DeepLSakubun:
 
 @pytest.fixture
 def appWaitingTranslate(deepLSakubun, default_input):
-    deepLSakubun.onClick(*default_input)
+    deepLSakubun.exec(*default_input)
     return deepLSakubun
 
 
@@ -81,7 +81,7 @@ def default_input_translated() -> Tuple[str]:
 
 
 def loop_status(deepLSakubun, any_input):
-    [deepLSakubun.onClick(*any_input) for _ in range(3)]
+    [deepLSakubun.exec(*any_input) for _ in range(3)]
 
 
 class Test_DeepLSakubun__init__:
@@ -112,7 +112,7 @@ class Test_DeepLSakubun_WaitingAnswer:
         expected_output_answer_original = ("answer_original", default_input[0])
         expected_output_description = ("description", "翻訳先の言語で回答してみましょう")
 
-        actual_output = deepLSakubun.onClick(*default_input)
+        actual_output = deepLSakubun.exec(*default_input)
 
         assert expected_output_answer_original in actual_output
         assert expected_output_description in actual_output
@@ -121,7 +121,7 @@ class Test_DeepLSakubun_WaitingAnswer:
         expected_status = DeepLSakubun.Status("WaitingTranslate")
 
         assert deepLSakubun.status == DeepLSakubun.Status("WaitingAnswer")
-        deepLSakubun.onClick(*default_input)
+        deepLSakubun.exec(*default_input)
         actual_status = deepLSakubun.status
 
         assert expected_status == actual_status
@@ -132,7 +132,7 @@ class Test_DeepLSakubun_WaitingAnswer:
 
         loop_status(deepLSakubun, default_input)
         new_input = ("それなりの回答", "XXXX", "EN-GB")
-        new_output = deepLSakubun.onClick(*new_input)
+        new_output = deepLSakubun.exec(*new_input)
 
         assert expected_answer_original in new_output
         assert old_answer_original not in new_output
@@ -151,7 +151,7 @@ class Test_DeepLSakubun_WaitingTranslate:
         expected_output_button = ("btn", "クリア")
         assert default_input_translated[2] in LANGUAGES_USING_QA
 
-        actual_output = appWaitingTranslate.onClick(*default_input_translated)
+        actual_output = appWaitingTranslate.exec(*default_input_translated)
 
         assert expected_output_answer_translated in actual_output
         assert expected_output_answer_correct_q in actual_output
@@ -163,7 +163,7 @@ class Test_DeepLSakubun_WaitingTranslate:
 
         assert appWaitingTranslate.status == \
             DeepLSakubun.Status("WaitingTranslate")
-        appWaitingTranslate.onClick(*default_input)
+        appWaitingTranslate.exec(*default_input)
         actual_status = appWaitingTranslate.status
 
         assert expected_status == actual_status
@@ -187,7 +187,7 @@ class Test_DeepLSakubun_WaitingTranslate:
         new_input = ("Some stupid answer", "XXXX", "EN-GB")
         monkeypatch.setenv("TRANSLATED_ANSWER", NEW_TRANSLATED_ANSWER)
 
-        actual_output = appWaitingTranslate.onClick(*new_input)
+        actual_output = appWaitingTranslate.exec(*new_input)
 
         assert old_output_answer_translated not in actual_output
         assert old_output_answer_correct_q not in actual_output
@@ -196,10 +196,10 @@ class Test_DeepLSakubun_WaitingTranslate:
         assert expected_output_answer_correct_q in actual_output
         assert expected_output_answer_correct_a in actual_output
 
-    def test_onClickの引数を元にcallAPIの引数が生成されること(
+    def test_execの引数を元にcallAPIの引数が生成されること(
             self, monkeypatch,
             deepLSakubun, default_input, default_input_translated):
-        deepLSakubun.onClick(*default_input)
+        deepLSakubun.exec(*default_input)
 
         URL = "https://api-free.deepl.com/v2/translate"
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
@@ -212,13 +212,13 @@ class Test_DeepLSakubun_WaitingTranslate:
         monkeypatch.setattr(
             "DeepLSakubun.DeepLSakubun._showCorrectAnswer",
             mock_showCorrectAnswer)
-        deepLSakubun.onClick(*default_input_translated)
+        deepLSakubun.exec(*default_input_translated)
 
         assert expected_param == deepLSakubun.param
 
     def test_APIキー未入力の場合は例外を吐くこと(self, appWaitingTranslate):
         with pytest.raises(Exception):
-            appWaitingTranslate.onClick("気の利いてない回答", "", "EN-GB")
+            appWaitingTranslate.exec("気の利いてない回答", "", "EN-GB")
 
     def test_分割可能な言語ではDeepLの回答を質問と答えに分割して出力すること(
             self, appWaitingTranslate, default_input_translated):
@@ -229,7 +229,7 @@ class Test_DeepLSakubun_WaitingTranslate:
         expected_output_answer_correct_a = (
             "answer_correct_a", TRANSLATED_ANSWER_A)
 
-        actual_output = appWaitingTranslate.onClick(*default_input_translated)
+        actual_output = appWaitingTranslate.exec(*default_input_translated)
 
         assert expected_output_answer_correct_q in actual_output
         assert expected_output_answer_correct_a in actual_output
@@ -244,7 +244,7 @@ class Test_DeepLSakubun_WaitingTranslate:
             "answer_correct_q", TRANSLATED_ANSWER_CANNOT_SPLIT)
 
         monkeypatch.setenv("TRANSLATED_ANSWER", TRANSLATED_ANSWER_CANNOT_SPLIT)
-        actual_output = appWaitingTranslate.onClick(*input_cannot_split)
+        actual_output = appWaitingTranslate.exec(*input_cannot_split)
 
         assert expected_output_answer_correct_q in actual_output
         for label in actual_output:
@@ -263,8 +263,8 @@ class Test_DeepLSakubun_Finish:
 
 class Test_others:
 
-    def test_存在しないステータスでonClickを叩くと例外を吐くこと(self):
+    def test_存在しないステータスでexecを叩くと例外を吐くこと(self):
         ...
 
-    def test_onClickを叩くたびに次のステータスへ遷移すること(self):
+    def test_execを叩くたびに次のステータスへ遷移すること(self):
         ...

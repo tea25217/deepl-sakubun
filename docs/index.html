@@ -110,7 +110,7 @@ def handler(*ags, **kws):
     auth_key = Element("auth_key").value
     language = Element("language").value
 
-    newLabels = deepLSakubun.onClick(text, auth_key, language)
+    newLabels = deepLSakubun.exec(text, auth_key, language)
     for label in newLabels:
         setLabelText(*label)
 
