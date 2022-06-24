@@ -6,7 +6,7 @@
 ＜現状の課題＞
 実行前にテスト対象モジュール全てのimportをdocs.DeepLSakubun等、
 頭にdocs.を付けないと動かない。
-現時点でPyScriptはディレクトリの指定を解釈できなさそう？なので、
+現時点でPyScriptはディレクトリ指定を解釈できなさそう？なので、
 docs.を付けておくことはできない。
 →PyScriptのソースを見た感じ、<py-env>pathsの指定はstringで渡せばPackage扱いのため、'/../../docs'にしたら通った。
 　しかしPythonソースのfrom docs.Common import Statusやfrom .Common import Statusについては、
