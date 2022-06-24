@@ -8,8 +8,8 @@
 頭にdocs.を付けないと動かない。
 現時点でPyScriptはディレクトリの指定を解釈できなさそう？なので、
 docs.を付けておくことはできない。
-→ソースを見た感じ<py-env>pathsの指定はstringで渡せばPackage扱いのため、'/../../docs'にしたら通った。
-　しかしpythonソースのfrom docs.Common import Statusやfrom .Common import Statusは
+→PyScriptのソースを見た感じ、<py-env>pathsの指定はstringで渡せばPackage扱いのため、'/../../docs'にしたら通った。
+　しかしPythonソースのfrom docs.Common import Statusやfrom .Common import Statusについては、
 　docsを名前解決できず。
 （仮に解決したら今度はGithub Pagesのパスの仕様と衝突しそう）
 
