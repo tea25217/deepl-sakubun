@@ -35,3 +35,7 @@ class Language:
             if separatorGroup == g["group"]:
                 return g["languages"]
         return []
+
+    def canSeparate(language: str) -> bool:
+        def f(g): return language in g["languages"]
+        return any(list(map(f, LANGUAGE_GROUP)))

@@ -5,9 +5,6 @@ import os
 from typing import Tuple
 from Common import Language, Status
 
-# 質問と回答をQ. ... A. ... で表す言語
-LANGUAGES_USING_QA = Language.getLanguagesFromSeparatorGroup("QA")
-
 
 class DeepLSakubunWaitingTranslate:
     def _readTranslatedAnswer(self, text: str, language: str) \
@@ -30,9 +27,9 @@ class DeepLSakubunWaitingTranslate:
         return self._decideToSplitAnswer()
 
     def _decideToSplitAnswer(self) -> Tuple[Tuple[str, str]]:
-        # 翻訳先言語が質問と回答をQとAで表現できる場合、
-        # 翻訳後の文字列を" A."の前で分割して2行で表示する
-        if self.target_lang in LANGUAGES_USING_QA:
+        # "Q. ... A. ..."を翻訳後にAに相当する文字が一意に定まる翻訳先言語の場合、
+        # 翻訳後の文字列をAの前で分割して2行で表示する
+        if Language.canSeparate(self.target_lang):
             self._splitReceivedAnswer(self.response["translations"][0]["text"])
             self.status = Status("Finish")
             return (("answer_correct_q", self.answer_correct_q),
@@ -63,5 +60,6 @@ class DeepLSakubunWaitingTranslate:
         self.response = json.loads(req.response)
 
     def _splitReceivedAnswer(self, received: str) -> None:
-        self.answer_correct_q = received.split(" A.")[0]
+        separator = Language.getSeparatorFromLanguage(self.target_lang)
+        self.answer_correct_q = received.split(separator)[0]
         self.answer_correct_a = received.split(self.answer_correct_q)[1]
