@@ -33,7 +33,7 @@ def translate(params: Params):
                 "message": "Required parameters are not completed."}
 
     try:
-        result = translator.translate_text(
+        response = translator.translate_text(
             params.text, target_lang=params.target_lang)
     except exceptions.AuthorizationException:
         return {"result": "NG", "message": "API key is wrong."}
@@ -42,8 +42,8 @@ def translate(params: Params):
 
     return {"result": "OK",
             "message": "Successfully translated.",
-            "detected_source_lang": result.detected_source_lang,
-            "text": result.text}
+            "detected_source_lang": response.detected_source_lang,
+            "text": response.text}
 
 
 @app.post("/usage/")
