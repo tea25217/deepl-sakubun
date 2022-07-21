@@ -1,5 +1,6 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, status
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from deepl import Translator, exceptions
 
@@ -11,6 +12,12 @@ class Params(BaseModel):
 
 
 app = FastAPI()
+
+
+@app.get("/")
+def get():
+    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT,
+                        content=None)
 
 
 def prepareTranslator(params: Params):
