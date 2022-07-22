@@ -35,8 +35,8 @@ def mock_callAPI(self, param: dict[str, str | dict[str, str]]) -> None:
     self.response = res
 
 
-def mock_callAPI_NO_RESULT(self, param: dict[str,
-                                             str | dict[str, str]]) -> None:
+def mock_callAPI_NO_RESULT(self, param: dict[str, str | dict[str, str]]) \
+        -> None:
     self.response = {"message": "test"}
 
 

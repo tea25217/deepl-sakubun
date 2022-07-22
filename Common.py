@@ -53,7 +53,7 @@ class Location:
     """URLから環境を判定する
     """
 
-    def getServerURL():
+    def getServerURL() -> str:
         from js import window
 
         hostname = window.location.hostname
