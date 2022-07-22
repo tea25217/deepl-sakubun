@@ -1,12 +1,11 @@
 """ステータスWaitingTranslateの処理
 """
-import json
-import os
 from typing import Tuple
 from Common import Language, Status
+from DeepLSakubunCallAPI import DeepLSakubunCallAPI
 
 
-class DeepLSakubunWaitingTranslate:
+class DeepLSakubunWaitingTranslate(DeepLSakubunCallAPI):
     def _readTranslatedAnswer(self, text: str, language: str) \
             -> Tuple[str, str]:
         self.answer_translated = text
@@ -14,15 +13,18 @@ class DeepLSakubunWaitingTranslate:
         return ("answer_translated", text)
 
     def _showCorrectAnswer(self, auth_key: str) -> Tuple[Tuple[str, str]]:
-        # DeepLのAPIを叩く
-        if not auth_key:
-            auth_key = os.getenv("DEEPL_API_KEY_FREE")
+        # APIキーが入力されている場合、直接DeepLのAPIを叩く
+        # APIキーが入力されていない場合、サーバー側で処理
+        if auth_key:
+            param = self._generateParam(auth_key)
+            self._callAPI(param)
+        else:
+            self._generateParamForAPIServer(auth_key)
+            self._callAPI(param)
 
-        if not auth_key:
-            raise Exception
-
-        param = self._generateParam(auth_key)
-        self._callAPI(param)
+            if self.response["result"] != "OK":
+                print(self.response["message"])
+                raise Exception
 
         return self._decideToSplitAnswer()
 
@@ -37,27 +39,7 @@ class DeepLSakubunWaitingTranslate:
         else:
             self.answer_correct = self.response["translations"][0]["text"]
             self.status = Status("Finish")
-            return (("answer_correct_q", self.answer_correct),)
-
-    def _generateParam(self, auth_key: str) -> dict[str, str]:
-        URL = "https://api-free.deepl.com/v2/translate"
-        headers = {"Content-Type": "application/x-www-form-urlencoded"}
-        body = "auth_key=" + auth_key + \
-            "&text=Q." + self.question + \
-            " A." + self.answer_original + \
-            "&target_lang=" + self.target_lang
-        param = {"URL": URL, "headers": headers, "body": body}
-        return param
-
-    def _callAPI(self, param: dict[str, str | dict[str, str]]) -> None:
-        # モジュールテストを可能にするため、PyScriptのjsモジュールはlazy importする
-        from js import XMLHttpRequest
-        req = XMLHttpRequest.new()
-        req.open("POST", param["URL"], False)
-        for k, v in param["headers"].items():
-            req.setRequestHeader(k, v)
-        req.send(param["body"])
-        self.response = json.loads(req.response)
+            return (("answer_correct_q", self.answer_correct), )
 
     def _splitReceivedAnswer(self, received: str) -> None:
         separator = Language.getSeparatorFromLanguage(self.target_lang)

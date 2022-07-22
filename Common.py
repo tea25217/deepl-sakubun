@@ -1,5 +1,12 @@
 from dataclasses import dataclass
+import os
 from typing import List, Literal
+
+SERVER_URL_DEV = "http://127.0.0.1:8000/"
+SERVER_URL_PROD = "https://deepl-sakubun.an.r.appspot.com/"
+SERVER_URL = \
+    SERVER_URL_PROD if os.environ.get("GAE_VERSION") else SERVER_URL_DEV
+DEEPL_API_URL = "https://api-free.deepl.com/v2/translate"
 
 LANGUAGE_GROUP = ({
     "group": "QA",

@@ -49,8 +49,10 @@ def translate(params: Params):
 
     return {"result": "OK",
             "message": "Successfully translated.",
-            "detected_source_lang": response.detected_source_lang,
-            "text": response.text}
+            "translations": [{
+                "detected_source_language": response.detected_source_lang,
+                "text": response.text
+            }]}
 
 
 @app.post("/usage/")

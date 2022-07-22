@@ -4,9 +4,10 @@
 入出力をざっくりと確認する。
 
 """
+import json
 import os
 from typing import Tuple
-from Common import Language
+from Common import Language, DEEPL_API_URL, SERVER_URL
 import pytest
 import DeepLSakubun as DeepLSakubun
 
@@ -21,26 +22,43 @@ LANGUAGES_USING_QA = Language.getLanguagesFromSeparatorGroup("QA")
 
 def mock_callAPI(self, param: dict[str, str | dict[str, str]]) -> None:
     os.getenv("TRANSLATED_ANSWER")
-    res = {"translations": [{"text": os.getenv("TRANSLATED_ANSWER")}]}
+    res = {
+        "result": "OK",
+        "translations": [{
+            "text": os.getenv("TRANSLATED_ANSWER")
+        }]
+    }
     self.response = res
 
 
-# _callAPIの引数確認用
+def mock_callAPI_NG(self, param: dict[str, str | dict[str, str]]) -> None:
+    self.response = {"result": "NG"}
+
+
+# _callAPIの引数確認用モック
+# _showCorrectAnswer()にparamを保持するコードを追加した
 def mock_showCorrectAnswer(self, auth_key: str) -> Tuple[Tuple[str, str]]:
-    if not auth_key:
-        raise Exception
-    param = self._generateParam(auth_key)
-    # paramを保持できるようにする
-    self.param = param
-    self._callAPI(param)
+    if auth_key:
+        param = self._generateParam(auth_key)
+        # paramを保持する
+        self.param = param
+        self._callAPI(param)
+    else:
+        param = self._generateParamForAPIServer(auth_key)
+        # paramを保持する
+        self.param = param
+        self._callAPI(param)
+
+        if self.response["result"] != "OK":
+            print(self.response["message"])
+            raise Exception
 
     return self._decideToSplitAnswer()
 
 
 @pytest.fixture
 def deepLSakubun(monkeypatch) -> DeepLSakubun:
-    monkeypatch.setattr(
-        "DeepLSakubun.DeepLSakubun._callAPI", mock_callAPI)
+    monkeypatch.setattr("DeepLSakubun.DeepLSakubun._callAPI", mock_callAPI)
     monkeypatch.setenv("TRANSLATED_ANSWER", TRANSLATED_ANSWER)
 
     deepLSakubun = DeepLSakubun.DeepLSakubun()
@@ -63,8 +81,18 @@ def default_input() -> Tuple[str]:
 
 
 @pytest.fixture
+def default_input_no_key() -> Tuple[str]:
+    return ("なんか気の利いた回答", "", "EN-GB")
+
+
+@pytest.fixture
 def default_input_translated() -> Tuple[str]:
     return ("Some smart answer", "XXXX", "EN-US")
+
+
+@pytest.fixture
+def default_input_translated_no_key() -> Tuple[str]:
+    return ("Some smart answer", "", "EN-US")
 
 
 def loop_status(deepLSakubun, any_input):
@@ -127,14 +155,14 @@ class Test_DeepLSakubun_WaitingAnswer:
 
 class Test_DeepLSakubun_WaitingTranslate:
 
-    def test_翻訳先言語の回答を受け取り_画面の変更内容を出力できること(
-            self, appWaitingTranslate, default_input_translated):
-        expected_output_answer_translated = (
-            "answer_translated", default_input_translated[0])
-        expected_output_answer_correct_q = (
-            "answer_correct_q", TRANSLATED_ANSWER_Q)
-        expected_output_answer_correct_a = (
-            "answer_correct_a", TRANSLATED_ANSWER_A)
+    def test_翻訳先言語の回答を受け取り_画面の変更内容を出力できること(self, appWaitingTranslate,
+                                           default_input_translated):
+        expected_output_answer_translated = ("answer_translated",
+                                             default_input_translated[0])
+        expected_output_answer_correct_q = ("answer_correct_q",
+                                            TRANSLATED_ANSWER_Q)
+        expected_output_answer_correct_a = ("answer_correct_a",
+                                            TRANSLATED_ANSWER_A)
         expected_output_button = ("btn", "クリア")
         assert default_input_translated[2] in LANGUAGES_USING_QA
 
@@ -155,20 +183,19 @@ class Test_DeepLSakubun_WaitingTranslate:
 
         assert expected_status == actual_status
 
-    def test_二周目以降_新しい回答を元に画面変更内容を出力できること(
-            self, monkeypatch, appWaitingTranslate, default_input_translated):
-        old_output_answer_translated = (
-            "answer_translated", default_input_translated[0])
-        old_output_answer_correct_q = (
-            "answer_correct_q", TRANSLATED_ANSWER_Q)
-        old_output_answer_correct_a = (
-            "answer_correct_a", TRANSLATED_ANSWER_A)
-        expected_output_answer_translated = (
-            "answer_translated", "Some stupid answer")
-        expected_output_answer_correct_q = (
-            "answer_correct_q", NEW_TRANSLATED_ANSWER_Q)
-        expected_output_answer_correct_a = (
-            "answer_correct_a", NEW_TRANSLATED_ANSWER_A)
+    def test_二周目以降_新しい回答を元に画面変更内容を出力できること(self, monkeypatch,
+                                          appWaitingTranslate,
+                                          default_input_translated):
+        old_output_answer_translated = ("answer_translated",
+                                        default_input_translated[0])
+        old_output_answer_correct_q = ("answer_correct_q", TRANSLATED_ANSWER_Q)
+        old_output_answer_correct_a = ("answer_correct_a", TRANSLATED_ANSWER_A)
+        expected_output_answer_translated = ("answer_translated",
+                                             "Some stupid answer")
+        expected_output_answer_correct_q = ("answer_correct_q",
+                                            NEW_TRANSLATED_ANSWER_Q)
+        expected_output_answer_correct_a = ("answer_correct_a",
+                                            NEW_TRANSLATED_ANSWER_A)
 
         loop_status(appWaitingTranslate, default_input_translated)
         new_input = ("Some stupid answer", "XXXX", "EN-GB")
@@ -183,12 +210,12 @@ class Test_DeepLSakubun_WaitingTranslate:
         assert expected_output_answer_correct_q in actual_output
         assert expected_output_answer_correct_a in actual_output
 
-    def test_execの引数を元にcallAPIの引数が生成されること(
-            self, monkeypatch,
-            deepLSakubun, default_input, default_input_translated):
+    def test_APIキーあり_execの引数を元にcallAPIの引数が生成されること(self, monkeypatch,
+                                                  deepLSakubun, default_input,
+                                                  default_input_translated):
         deepLSakubun.exec(*default_input)
 
-        URL = "https://api-free.deepl.com/v2/translate"
+        URL = DEEPL_API_URL
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         body = "auth_key=" + default_input_translated[1] + \
             "&text=Q." + deepLSakubun.question + \
@@ -196,39 +223,66 @@ class Test_DeepLSakubun_WaitingTranslate:
             "&target_lang=" + default_input_translated[2]
         expected_param = {"URL": URL, "headers": headers, "body": body}
 
-        monkeypatch.setattr(
-            "DeepLSakubun.DeepLSakubun._showCorrectAnswer",
-            mock_showCorrectAnswer)
+        monkeypatch.setattr("DeepLSakubun.DeepLSakubun._showCorrectAnswer",
+                            mock_showCorrectAnswer)
         deepLSakubun.exec(*default_input_translated)
 
         assert expected_param == deepLSakubun.param
 
-    def test_APIキー未入力の場合は例外を吐くこと(self, appWaitingTranslate):
+    def test_APIキーなし_execの引数を元にgenerateParamForAPIServerの引数が生成されること(
+            self, monkeypatch, deepLSakubun, default_input_no_key,
+            default_input_translated_no_key):
+        deepLSakubun.exec(*default_input_no_key)
+
+        URL = SERVER_URL
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        body = json.dumps({
+            "text":
+            "Q." + deepLSakubun.question + " A." +
+            deepLSakubun.answer_original,
+            "target_lang":
+            default_input_translated_no_key[2],
+            "auth_key":
+            default_input_translated_no_key[1]
+        })
+        expected_param = {"URL": URL, "headers": headers, "body": body}
+
+        monkeypatch.setattr("DeepLSakubun.DeepLSakubun._showCorrectAnswer",
+                            mock_showCorrectAnswer)
+        deepLSakubun.exec(*default_input_translated_no_key)
+
+        assert expected_param == deepLSakubun.param
+
+    def test_APIキーなし_サーバーから結果NGが返却された場合は例外を吐くこと(
+            self, monkeypatch, appWaitingTranslate):
+        monkeypatch.setattr("DeepLSakubun.DeepLSakubun._callAPI",
+                            mock_callAPI_NG)
+
         with pytest.raises(Exception):
             appWaitingTranslate.exec("気の利いてない回答", "", "EN-GB")
 
-    def test_分割可能な言語ではDeepLの回答を質問と答えに分割して出力すること(
-            self, appWaitingTranslate, default_input_translated):
+    def test_分割可能な言語ではDeepLの回答を質問と答えに分割して出力すること(self, appWaitingTranslate,
+                                                default_input_translated):
         assert default_input_translated[2] in LANGUAGES_USING_QA
 
-        expected_output_answer_correct_q = (
-            "answer_correct_q", TRANSLATED_ANSWER_Q)
-        expected_output_answer_correct_a = (
-            "answer_correct_a", TRANSLATED_ANSWER_A)
+        expected_output_answer_correct_q = ("answer_correct_q",
+                                            TRANSLATED_ANSWER_Q)
+        expected_output_answer_correct_a = ("answer_correct_a",
+                                            TRANSLATED_ANSWER_A)
 
         actual_output = appWaitingTranslate.exec(*default_input_translated)
 
         assert expected_output_answer_correct_q in actual_output
         assert expected_output_answer_correct_a in actual_output
 
-    def test_分割できない言語ではDeepLの回答を1つのタプルで出力すること(
-            self, monkeypatch, appWaitingTranslate):
+    def test_分割できない言語ではDeepLの回答を1つのタプルで出力すること(self, monkeypatch,
+                                              appWaitingTranslate):
         input_cannot_split = ("Nie można go podzielić.", "XXXX", "PL")
         assert input_cannot_split[2] not in LANGUAGES_USING_QA
         TRANSLATED_ANSWER_CANNOT_SPLIT = "Nie można jej podzielić."
 
-        expected_output_answer_correct_q = (
-            "answer_correct_q", TRANSLATED_ANSWER_CANNOT_SPLIT)
+        expected_output_answer_correct_q = ("answer_correct_q",
+                                            TRANSLATED_ANSWER_CANNOT_SPLIT)
 
         monkeypatch.setenv("TRANSLATED_ANSWER", TRANSLATED_ANSWER_CANNOT_SPLIT)
         actual_output = appWaitingTranslate.exec(*input_cannot_split)
