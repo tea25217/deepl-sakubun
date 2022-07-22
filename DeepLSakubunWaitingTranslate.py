@@ -22,6 +22,8 @@ class DeepLSakubunWaitingTranslate(DeepLSakubunCallAPI):
             param = self._generateParamForAPIServer(auth_key)
             self._callAPI(param)
 
+            if "result" not in self.response:
+                raise Exception
             if self.response["result"] != "OK":
                 print(self.response["message"])
                 raise Exception

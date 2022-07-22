@@ -31,8 +31,13 @@ def mock_callAPI(self, param: dict[str, str | dict[str, str]]) -> None:
     self.response = res
 
 
+def mock_callAPI_NO_RESULT(self, param: dict[str,
+                                             str | dict[str, str]]) -> None:
+    self.response = {"message": "test"}
+
+
 def mock_callAPI_NG(self, param: dict[str, str | dict[str, str]]) -> None:
-    self.response = {"result": "NG"}
+    self.response = {"result": "NG", "message": "test"}
 
 
 # _callAPIの引数確認用モック
@@ -234,8 +239,8 @@ class Test_DeepLSakubun_WaitingTranslate:
             default_input_translated_no_key):
         deepLSakubun.exec(*default_input_no_key)
 
-        URL = SERVER_URL
-        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        URL = SERVER_URL + "translate/"
+        headers = {"Content-Type": "application/json"}
         body = json.dumps({
             "text":
             "Q." + deepLSakubun.question + " A." +
@@ -253,13 +258,23 @@ class Test_DeepLSakubun_WaitingTranslate:
 
         assert expected_param == deepLSakubun.param
 
-    def test_APIキーなし_サーバーから結果NGが返却された場合は例外を吐くこと(
-            self, monkeypatch, appWaitingTranslate):
+    def test_APIキーなし_サーバー返却値にresultが含まれない場合は例外を吐くこと(self, monkeypatch,
+                                                    appWaitingTranslate,
+                                                    default_input_translated):
+        monkeypatch.setattr("DeepLSakubun.DeepLSakubun._callAPI",
+                            mock_callAPI_NO_RESULT)
+
+        with pytest.raises(Exception):
+            appWaitingTranslate.exec(*default_input_translated)
+
+    def test_APIキーなし_サーバーから結果NGが返却された場合は例外を吐くこと(self, monkeypatch,
+                                                appWaitingTranslate,
+                                                default_input_translated):
         monkeypatch.setattr("DeepLSakubun.DeepLSakubun._callAPI",
                             mock_callAPI_NG)
 
         with pytest.raises(Exception):
-            appWaitingTranslate.exec("気の利いてない回答", "", "EN-GB")
+            appWaitingTranslate.exec(*default_input_translated)
 
     def test_分割可能な言語ではDeepLの回答を質問と答えに分割して出力すること(self, appWaitingTranslate,
                                                 default_input_translated):

@@ -8,11 +8,12 @@ from deepl import Translator, exceptions
 app = FastAPI()
 
 origins = [
-    "http://127.0.0.1:5500/", "https://tea25217.github.io/deepl-sakubun/"
+    "http://127.0.0.1:5500/",
+    "https://tea25217.github.io/deepl-sakubun/",
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -31,7 +32,7 @@ def get():
 
 
 def prepareTranslator(params: Params):
-    # print(f"params are\n {params.dict()}")
+    print(f"params are\n {params}")
     auth_key = params.auth_key or os.getenv("DEEPL_API_KEY_FREE")
     # print(f"{auth_key=}")
 
@@ -58,6 +59,9 @@ def translate(params: Params):
         return {"result": "NG", "message": "API key is wrong."}
     except exceptions.DeepLException:
         return {"result": "NG", "message": "API access is failed."}
+
+    print(f"{response.detected_source_lang=}")
+    print(f"{response.text=}")
 
     return {
         "result":

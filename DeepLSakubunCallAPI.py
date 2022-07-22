@@ -17,8 +17,8 @@ class DeepLSakubunCallAPI:
         return param
 
     def _generateParamForAPIServer(self, auth_key: str) -> dict[str, str]:
-        URL = SERVER_URL
-        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        URL = SERVER_URL + "translate/"
+        headers = {"Content-Type": "application/json"}
         body = json.dumps({
                 "text": "Q." + self.question + " A." + self.answer_original,
                 "target_lang": self.target_lang,
@@ -34,5 +34,6 @@ class DeepLSakubunCallAPI:
         req.open("POST", param["URL"], False)
         for k, v in param["headers"].items():
             req.setRequestHeader(k, v)
+        print(f'{param["URL"]} {param["body"]}')
         req.send(param["body"])
         self.response = json.loads(req.response)
