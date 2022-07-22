@@ -7,7 +7,7 @@
 import json
 import os
 from typing import Tuple
-from Common import Language, DEEPL_API_URL, SERVER_URL
+from Common import Language, DEEPL_API_URL, SERVER_URL_DEV
 import pytest
 import DeepLSakubun as DeepLSakubun
 
@@ -18,6 +18,10 @@ NEW_TRANSLATED_ANSWER = "Q. PPPPPPPP A. BBBBBBBB"
 NEW_TRANSLATED_ANSWER_Q = "Q. PPPPPPPP"
 NEW_TRANSLATED_ANSWER_A = " A. BBBBBBBB"
 LANGUAGES_USING_QA = Language.getLanguagesFromSeparatorGroup("QA")
+
+
+def mock_getServerURL():
+    return SERVER_URL_DEV
 
 
 def mock_callAPI(self, param: dict[str, str | dict[str, str]]) -> None:
@@ -239,7 +243,7 @@ class Test_DeepLSakubun_WaitingTranslate:
             default_input_translated_no_key):
         deepLSakubun.exec(*default_input_no_key)
 
-        URL = SERVER_URL + "translate/"
+        URL = SERVER_URL_DEV + "translate/"
         headers = {"Content-Type": "application/json"}
         body = json.dumps({
             "text":
@@ -254,6 +258,8 @@ class Test_DeepLSakubun_WaitingTranslate:
 
         monkeypatch.setattr("DeepLSakubun.DeepLSakubun._showCorrectAnswer",
                             mock_showCorrectAnswer)
+        monkeypatch.setattr("Common.Location.getServerURL", mock_getServerURL)
+
         deepLSakubun.exec(*default_input_translated_no_key)
 
         assert expected_param == deepLSakubun.param

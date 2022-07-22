@@ -1,7 +1,7 @@
 """APIコール回り
 """
 import json
-from Common import DEEPL_API_URL, SERVER_URL
+from Common import DEEPL_API_URL, Location
 
 
 class DeepLSakubunCallAPI:
@@ -17,7 +17,7 @@ class DeepLSakubunCallAPI:
         return param
 
     def _generateParamForAPIServer(self, auth_key: str) -> dict[str, str]:
-        URL = SERVER_URL + "translate/"
+        URL = Location.getServerURL() + "translate/"
         headers = {"Content-Type": "application/json"}
         body = json.dumps({
                 "text": "Q." + self.question + " A." + self.answer_original,

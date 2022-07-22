@@ -1,12 +1,10 @@
 from dataclasses import dataclass
-import os
 from typing import List, Literal
 
 SERVER_URL_DEV = "http://0.0.0.0:8000/"
 SERVER_URL_PROD = "https://deepl-sakubun.an.r.appspot.com/"
-SERVER_URL = \
-    SERVER_URL_PROD if os.environ.get("GAE_VERSION") else SERVER_URL_DEV
 DEEPL_API_URL = "https://api-free.deepl.com/v2/translate"
+FRONT_URL_PROD = "https://tea25217.github.io/deepl-sakubun/"
 
 LANGUAGE_GROUP = ({
     "group": "QA",
@@ -44,5 +42,22 @@ class Language:
         return []
 
     def canSeparate(language: str) -> bool:
-        def f(g): return language in g["languages"]
+
+        def f(g):
+            return language in g["languages"]
+
         return any(list(map(f, LANGUAGE_GROUP)))
+
+
+class Location:
+    """URLから環境を判定する
+    """
+
+    def getServerURL():
+        from js import window
+
+        hostname = window.location.hostname
+        if hostname in FRONT_URL_PROD:
+            return SERVER_URL_PROD
+        else:
+            return SERVER_URL_DEV
