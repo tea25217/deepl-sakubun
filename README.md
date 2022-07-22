@@ -23,7 +23,6 @@ https://www.deepl.com/ja/docs-api/translating-text/request/<br>
 - 決定ボタンを押すと、DeepLによる模範解答が表示されます
 - クリアボタンを押すと最初に戻ります
 <br>
-<br>
 
 ## 補足：APIキー
 画面左上にあるAPIキーの欄は入力しなくても動きますが、入れてもらえると喜びます。<br>
