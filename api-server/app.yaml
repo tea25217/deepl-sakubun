@@ -1,7 +1,7 @@
 runtime: python310
 env: standard
 instance_class: F1
-entrypoint: gunicorn -k uvicorn.workers.UvicornWorker main:app
+entrypoint: uvicorn main:app --host=0.0.0.0 --port=${PORT:-443}
 automatic_scaling:
   max_instances: 1
   max_idle_instances: 1
