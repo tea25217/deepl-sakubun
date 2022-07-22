@@ -19,7 +19,7 @@ class DeepLSakubunWaitingTranslate(DeepLSakubunCallAPI):
             param = self._generateParam(auth_key)
             self._callAPI(param)
         else:
-            self._generateParamForAPIServer(auth_key)
+            param = self._generateParamForAPIServer(auth_key)
             self._callAPI(param)
 
             if self.response["result"] != "OK":
