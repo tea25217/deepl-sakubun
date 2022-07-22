@@ -1,8 +1,22 @@
 import os
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from deepl import Translator, exceptions
+
+app = FastAPI()
+
+origins = [
+    "http://127.0.0.1:5500/", "https://tea25217.github.io/deepl-sakubun/"
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class Params(BaseModel):
@@ -11,13 +25,9 @@ class Params(BaseModel):
     target_lang: str | None = None
 
 
-app = FastAPI()
-
-
 @app.get("/")
 def get():
-    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT,
-                        content=None)
+    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content=None)
 
 
 def prepareTranslator(params: Params):
@@ -36,23 +46,29 @@ def translate(params: Params):
     translator = prepareTranslator(params)
 
     if not all([translator, params.text, params.target_lang]):
-        return {"result": "NG",
-                "message": "Required parameters are not completed."}
+        return {
+            "result": "NG",
+            "message": "Required parameters are not completed."
+        }
 
     try:
-        response = translator.translate_text(
-            params.text, target_lang=params.target_lang)
+        response = translator.translate_text(params.text,
+                                             target_lang=params.target_lang)
     except exceptions.AuthorizationException:
         return {"result": "NG", "message": "API key is wrong."}
     except exceptions.DeepLException:
         return {"result": "NG", "message": "API access is failed."}
 
-    return {"result": "OK",
-            "message": "Successfully translated.",
-            "translations": [{
-                "detected_source_language": response.detected_source_lang,
-                "text": response.text
-            }]}
+    return {
+        "result":
+        "OK",
+        "message":
+        "Successfully translated.",
+        "translations": [{
+            "detected_source_language": response.detected_source_lang,
+            "text": response.text
+        }]
+    }
 
 
 @app.post("/usage/")
@@ -69,9 +85,11 @@ def usage(params: Params):
         return {"result": "NG", "message": "API key is required."}
 
     if usage.character.valid:
-        return {"result": "OK",
-                "message": "Character usage is checked.",
-                "count": usage.character.count,
-                "limit": usage.character.limit}
+        return {
+            "result": "OK",
+            "message": "Character usage is checked.",
+            "count": usage.character.count,
+            "limit": usage.character.limit
+        }
 
     return {"result": "NG", "message": "Something is wrong."}
