@@ -9,3 +9,5 @@ automatic_scaling:
   min_idle_instances: 0
   min_pending_latency: 3000ms
   max_pending_latency: automatic
+includes:
+- secret.yaml
