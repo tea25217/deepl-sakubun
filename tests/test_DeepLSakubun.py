@@ -17,7 +17,7 @@ TRANSLATED_ANSWER_A = " A. AAAAAAAA"
 NEW_TRANSLATED_ANSWER = "Q. PPPPPPPP A. BBBBBBBB"
 NEW_TRANSLATED_ANSWER_Q = "Q. PPPPPPPP"
 NEW_TRANSLATED_ANSWER_A = " A. BBBBBBBB"
-LANGUAGES_USING_QA = Language.getLanguagesFromSeparatorGroup("QA")
+LANGUAGES_CAN_SEPARATE_BY_A = Language.getLanguagesFromSeparatorGroup("A")
 
 
 def mock_getServerURL():
@@ -173,7 +173,7 @@ class Test_DeepLSakubun_WaitingTranslate:
         expected_output_answer_correct_a = ("answer_correct_a",
                                             TRANSLATED_ANSWER_A)
         expected_output_button = ("btn", "クリア")
-        assert default_input_translated[2] in LANGUAGES_USING_QA
+        assert default_input_translated[2] in LANGUAGES_CAN_SEPARATE_BY_A
 
         actual_output = appWaitingTranslate.exec(*default_input_translated)
 
@@ -284,7 +284,7 @@ class Test_DeepLSakubun_WaitingTranslate:
 
     def test_分割可能な言語ではDeepLの回答を質問と答えに分割して出力すること(self, appWaitingTranslate,
                                                 default_input_translated):
-        assert default_input_translated[2] in LANGUAGES_USING_QA
+        assert default_input_translated[2] in LANGUAGES_CAN_SEPARATE_BY_A
 
         expected_output_answer_correct_q = ("answer_correct_q",
                                             TRANSLATED_ANSWER_Q)
@@ -299,7 +299,7 @@ class Test_DeepLSakubun_WaitingTranslate:
     def test_分割できない言語ではDeepLの回答を1つのタプルで出力すること(self, monkeypatch,
                                               appWaitingTranslate):
         input_cannot_split = ("Nie można go podzielić.", "XXXX", "PL")
-        assert input_cannot_split[2] not in LANGUAGES_USING_QA
+        assert input_cannot_split[2] not in LANGUAGES_CAN_SEPARATE_BY_A
         TRANSLATED_ANSWER_CANNOT_SPLIT = "Nie można jej podzielić."
 
         expected_output_answer_correct_q = ("answer_correct_q",

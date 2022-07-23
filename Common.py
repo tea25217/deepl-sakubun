@@ -7,10 +7,10 @@ DEEPL_API_URL = "https://api-free.deepl.com/v2/translate"
 FRONT_URL_PROD = "https://tea25217.github.io/deepl-sakubun/"
 
 LANGUAGE_GROUP = ({
-    "group": "QA",
-    "languages": ("EN-GB", "EN-US", "JA"),
+    "group": "A",
+    "languages": ("EN-GB", "EN-US", "CS", "DE", "DA", "JA"),
     "separator": " A."
-}, )
+},)
 
 
 @dataclass(slots=True)
