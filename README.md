@@ -11,7 +11,7 @@ https://tea25217.github.io/deepl-sakubun/<br>
 DeepL翻訳の機能を利用して外国語のライティングを練習するwebアプリです。<br>
 [Englister](https://english.yunomy.com/)や[Deep英作文](https://deep-eisakubun.vercel.app/)のパチモン。<br>
 <br>
-オマージュ元に比べての差別化要素として、練習する言語を選択可能です。<br>
+オマージュ元に対する差別化要素として、練習する言語を選択可能です。<br>
 API仕様のtarget_langに記載されている言語に対応しています。<br>
 https://www.deepl.com/ja/docs-api/translating-text/request/<br>
 <br>
