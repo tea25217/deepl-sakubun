@@ -21,7 +21,7 @@
             - /deepl-sakubun/DeepLSakubunWaitingTranslate.py
             - /deepl-sakubun/DeepLSakubunFinish.py
             - /deepl-sakubun/DeepLSakubunCallAPI.py
-            - /deepl-sakubun/DOMgenerator.py
+            - /deepl-sakubun/HTMLgenerator.py
             - /deepl-sakubun/Common.py
             - /deepl-sakubun/question.txt
     </py-env>
@@ -37,7 +37,7 @@
         <div class="col-md-3">
           <label>翻訳先言語</label>
           <select id="language" class="form-control">
-            <!--DOMgenerator.generateLanguageSelector()で生成する-->
+            <!--HTMLgenerator.generateLanguageSelector()で生成する-->
           </select>
         </div>
       </div>
@@ -74,7 +74,7 @@
 
     <py-script>
 from DeepLSakubun import DeepLSakubun
-from DOMgenerator import DOMgenerator
+from HTMLgenerator import HTMLgenerator
 
 def setLabelText(id, text, *ags, **kws):
     pyscript.write(id, text)
@@ -92,7 +92,7 @@ def handler(*ags, **kws):
 
 
 if __name__=="__main__":
-    languageSelector = DOMgenerator.generateLanguageSelector()
+    languageSelector = HTMLgenerator.generateLanguageSelector()
     setLabelText("language", languageSelector)
     deepLSakubun = DeepLSakubun()
     setLabelText("question", deepLSakubun.chooseAQuestion())

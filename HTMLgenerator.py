@@ -1,7 +1,7 @@
 from Common import LANGUAGES
 
 
-class DOMgenerator:
+class HTMLgenerator:
     def generateLanguageSelector():
         def makeRow(param):
             code, name = param[0], param[1]
