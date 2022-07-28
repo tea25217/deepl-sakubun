@@ -76,9 +76,6 @@
 from DeepLSakubun import DeepLSakubun
 from HTMLgenerator import HTMLgenerator
 
-def setLabelText(id, text, *ags, **kws):
-    pyscript.write(id, text)
-
 
 def handler(*ags, **kws):
     text = Element("sakubun").value
@@ -88,14 +85,14 @@ def handler(*ags, **kws):
 
     newLabels = deepLSakubun.exec(text, auth_key, language)
     for label in newLabels:
-        setLabelText(*label)
+        pyscript.write(*label)
 
 
 if __name__=="__main__":
     languageSelector = HTMLgenerator.generateLanguageSelector()
-    setLabelText("language", languageSelector)
+    pyscript.write("language", languageSelector)
     deepLSakubun = DeepLSakubun()
-    setLabelText("question", deepLSakubun.chooseAQuestion())
+    pyscript.write("question", deepLSakubun.chooseAQuestion())
 
     </py-script>
 
