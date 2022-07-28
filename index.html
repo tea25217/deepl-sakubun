@@ -21,6 +21,7 @@
             - /deepl-sakubun/DeepLSakubunWaitingTranslate.py
             - /deepl-sakubun/DeepLSakubunFinish.py
             - /deepl-sakubun/DeepLSakubunCallAPI.py
+            - /deepl-sakubun/DOMgenerator.py
             - /deepl-sakubun/Common.py
             - /deepl-sakubun/question.txt
     </py-env>
@@ -36,35 +37,7 @@
         <div class="col-md-3">
           <label>翻訳先言語</label>
           <select id="language" class="form-control">
-            <!--フレームワークを使わずに書き進めたことでテンプレートエンジンが使えず後悔した場所-->
-            <option value="EN-GB" selected="selected">英語（イギリス）</option>
-            <option value="EN-US">英語（アメリカ）</option>
-            <option value="BG">ブルガリア語</option>
-            <option value="CS">チェコ語</option>
-            <option value="DA">デンマーク語</option>
-            <option value="DE">ドイツ語</option>
-            <option value="EL">ギリシア語</option>
-            <option value="ES">スペイン語</option>
-            <option value="ET">エストニア語</option>
-            <option value="FI">フィンランド語</option>
-            <option value="FR">フランス語</option>
-            <option value="HU">ハンガリー語</option>
-            <option value="ID">インドネシア語</option>
-            <option value="IT">イタリア語</option>
-            <option value="JA">日本語</option>
-            <option value="LT">リトアニア語</option>
-            <option value="LV">ラトビア語</option>
-            <option value="NL">オランダ語</option>
-            <option value="PL">ポーランド語</option>
-            <option value="PT-PT">ポルトガル語</option>
-            <option value="PT-BR">ポルトガル語（ブラジル）</option>
-            <option value="RO">ルーマニア語</option>
-            <option value="RU">ロシア語</option>
-            <option value="SK">スロバキア語</option>
-            <option value="SL">スロベニア語</option>
-            <option value="SV">スウェーデン語</option>
-            <option value="TR">トルコ語</option>
-            <option value="ZH">中国語</option>
+            <!--DOMgenerator.generateLanguageSelector()で生成する-->
           </select>
         </div>
       </div>
@@ -100,8 +73,8 @@
     </form>
 
     <py-script>
-import DeepLSakubun
-
+from DeepLSakubun import DeepLSakubun
+from DOMgenerator import DOMgenerator
 
 def setLabelText(id, text, *ags, **kws):
     pyscript.write(id, text)
@@ -119,7 +92,9 @@ def handler(*ags, **kws):
 
 
 if __name__=="__main__":
-    deepLSakubun = DeepLSakubun.DeepLSakubun()
+    languageSelector = DOMgenerator.generateLanguageSelector()
+    setLabelText("language", languageSelector)
+    deepLSakubun = DeepLSakubun()
     setLabelText("question", deepLSakubun.chooseAQuestion())
 
     </py-script>

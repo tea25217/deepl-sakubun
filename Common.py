@@ -6,6 +6,37 @@ SERVER_URL_PROD = "https://deepl-sakubun.an.r.appspot.com/"
 DEEPL_API_URL = "https://api-free.deepl.com/v2/translate"
 FRONT_URL_PROD = "https://tea25217.github.io/deepl-sakubun/"
 
+LANGUAGES = (
+    ("EN-GB", "英語（イギリス）"),
+    ("EN-US", "英語（アメリカ）"),
+    ("BG", "ブルガリア語"),
+    ("CS", "チェコ語"),
+    ("DA", "デンマーク語"),
+    ("DE", "ドイツ語"),
+    ("EL", "ギリシア語"),
+    ("ES", "スペイン語"),
+    ("ET", "エストニア語"),
+    ("FI", "フィンランド語"),
+    ("FR", "フランス語"),
+    ("HU", "ハンガリー語"),
+    ("ID", "インドネシア語"),
+    ("IT", "イタリア語"),
+    ("JA", "日本語"),
+    ("LT", "リトアニア語"),
+    ("LV", "ラトビア語"),
+    ("NL", "オランダ語"),
+    ("PL", "ポーランド語"),
+    ("PT-PT", "ポルトガル語"),
+    ("PT-BR", "ポルトガル語（ブラジル）"),
+    ("RO", "ルーマニア語"),
+    ("RU", "ロシア語"),
+    ("SK", "スロバキア語"),
+    ("SL", "スロベニア語"),
+    ("SV", "スウェーデン語"),
+    ("TR", "トルコ語"),
+    ("ZH", "中国語"),
+)
+
 LANGUAGE_GROUP = ({
     "group": "A",
     "languages": ("EN-GB", "EN-US", "CS", "DE", "DA", "JA"),
